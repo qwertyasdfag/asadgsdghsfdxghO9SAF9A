@@ -1,0 +1,3189 @@
+/*
+  Loader by Muchy_Peachy
+     Kefir-Main cheat developer
+*/
+
+// Variables
+jeff = {}
+jeff.Name = "encore.com"
+jeff.NameLen = string.Left(jeff.Name, string.len(jeff.Name) - 5)
+jeff.NameLen2 = string.Right(jeff.Name, string.len(jeff.Name) - 4)
+jeff.White = Color(255, 255, 255)
+jeff.Green = Color(123, 255, 22)
+jeff.Red = Color(255, 55, 55)
+jeff.WhiteGray = Color(220, 220, 220)
+jeff.Gray = Color(70, 70, 70)
+jeff.DarkGray = Color(40, 40, 40)
+jeff.DarkGray2 = Color(25, 25, 25)
+jeff.DarkGray3 = Color(30, 30, 30)
+jeff.BackgroundColor = Color(25, 25, 25)
+jeff.TabBackgroundColor = Color(21, 21, 21)
+jeff.Black = Color(0, 0, 0)
+jeff.menuX, jeff.menuY = ScrW() / 2 - 350, ScrH() / 2 - 300
+jeff.menuOpen = false
+jeff.menuDelay = false
+jeff.Delay = false
+jeff.path = "../addons/encore/resources/"
+jeff.gradientMaterial = Material(jeff.path.. "gradient.png")
+jeff.backgroundMaterial = Material(jeff.path.. "background.png")
+jeff.tabBackgroundMaterial = Material(jeff.path.. "tabbackground.png")
+jeff.hitmarkerMaterial = Material(jeff.path.. "hitmarker.png")
+jeff.menuAlpha = 0
+jeff.menuClosing = false
+jeff.infoAlpha = 0
+jeff.infoClosing = false
+jeff.backgroundAlpha = 0
+jeff.infoBackgroundAlpha = 0
+jeff.grounded = false
+jeff.currentTab = "ragebot"
+jeff.ply = LocalPlayer()
+jeff.fakeAngles = NULL
+jeff.strafing = false
+jeff.CircleStrafeVal = 0
+jeff.CircleStrafeSpeed = 1
+jeff.cl_forwardspeed_cvar = GetConVar("cl_forwardspeed")
+jeff.cl_forwardspeed_value = 10000
+if(jeff.cl_forwardspeed_cvar) then
+	jeff.cl_forwardspeed_value = jeff.cl_forwardspeed_cvar:GetFloat()
+end
+jeff.cl_sidespeed_cvar = GetConVar("cl_sidespeed")
+jeff.cl_sidespeed_value = 10000
+if(jeff.cl_sidespeed_cvar) then
+	jeff.cl_sidespeed_value = jeff.cl_sidespeed_cvar:GetFloat()
+end
+jeff.SourceSkyname = GetConVar("sv_skyname"):GetString()
+jeff.orgskyname = jeff.SourceSkyname
+jeff.SourceSkyPre = {"lf", "ft", "rt", "bk", "dn", "up"}
+jeff.SourceSkyMat = {
+    Material("skybox/".. jeff.SourceSkyname.. "lf"),
+    Material("skybox/".. jeff.SourceSkyname.. "ft"),
+    Material("skybox/".. jeff.SourceSkyname.. "rt"),
+    Material("skybox/".. jeff.SourceSkyname.. "bk"),
+    Material("skybox/".. jeff.SourceSkyname.. "dn"),
+    Material("skybox/".. jeff.SourceSkyname.. "up")
+}
+jeff.chamsMaterial = CreateMaterial("a", "VertexLitGeneric", {
+	["$ignorez"] = 1,
+	["$model"] = 1,
+	["$basetexture"] = "models/debug/debugwhite",
+})
+jeff.chamsMaterial2 = CreateMaterial("@", "VertexLitGeneric", {
+	["$ignorez"] = 0,
+	["$model"] = 1,
+	["$basetexture"] = "models/debug/debugwhite",
+})
+jeff.messageJustSent = false
+jeff.messages = 0
+jeff.EventsAlpha = 0
+jeff.Hit = false
+jeff.hasJumped = false
+jeff.hitmarkerAlpha = 255
+jeff.hitmarkerSoundPlaying = false
+jeff.configs = {
+    "Legit",
+    "Rage",
+    "HvH",
+    "Secret",
+    "Fun",
+}
+jeff.fakeduckMethod = {
+    "On Ground",
+    "In Air",
+}
+jeff.fakelagMethod = {
+    "On Ground",
+    "In Air",
+    "On Move",
+    "On Stand",
+}
+jeff.fakelagType = {
+    "bSendPacket",
+    "Host Timescale",
+}
+jeff.Emotes = {
+    "Dance", 
+    "Sexy", 
+    "Wave", 
+    "Robot", 
+    "Bow",
+}
+jeff.BaValues = {
+    "Nightmode", 
+    "Autism", 
+    "Fullbright", 
+}
+jeff.chamsType = {
+    "Flat",
+    "Textured",
+}
+jeff.hitboxes = {
+    "Head",
+    "Body",
+}
+jeff.fakeX = 0
+jeff.fakeY = 0
+jeff.fakelagTick = 0
+jeff.infoCloseTimer = 15
+jeff.infoOpen = false
+jeff.fullConfig = ""
+jeff.tWeapons = {"weapon_ttt_c4", "weapon_ttt_knife", "weapon_ttt_phammer", "weapon_ttt_sipistol", "weapon_ttt_flaregun", "weapon_ttt_push", "weapon_ttt_radio", "weapon_ttt_teleport", "(Disguise)" ,"spiderman's_swep", "weapon_ttt_trait_defilibrator", "weapon_ttt_xbow", "weapon_ttt_dhook", "weapon_awp", "weapon_jihadbomb", "weapon_ttt_knife", "weapon_ttt_c4", "weapon_ttt_decoy", "weapon_ttt_flaregun", "weapon_ttt_phammer", "weapon_ttt_push", "weapon_ttt_radio", "weapon_ttt_sipistol", "weapon_ttt_teleport", "weapon_ttt_awp", "weapon_ttt_silencedsniper", "weapon_ttt_turtlenade", "weapon_ttt_death_station", "weapon_ttt_sg552", "weapon_ttt_tripmine"}
+jeff.toggled = 0
+jeff.em = FindMetaTable"Entity"
+jeff.pm = FindMetaTable"Player"
+jeff.cm = FindMetaTable"CUserCmd"
+jeff.wm = FindMetaTable"Weapon"
+jeff.am = FindMetaTable"Angle"
+jeff.vm = FindMetaTable"Vector"
+jeff.fullbright = false
+jeff.hooks = {}
+jeff.Fix = 0
+jeff.Volume = 1
+jeff.volumeFix = false
+jeff.fa = nil
+jeff.trace_walls = bit.bor(CONTENTS_TESTFOGVOLUME, CONTENTS_EMPTY, CONTENTS_MONSTER, CONTENTS_HITBOX)
+jeff.NoPenetration = {[MAT_SLOSH] = true}
+jeff.PenMod = {[MAT_SAND] = 0.5, [MAT_DIRT] = 0.8, [MAT_METAL] = 1.1, [MAT_TILE] = 0.9, [MAT_WOOD] = 1.2}
+jeff.trace_normal = bit.bor(CONTENTS_SOLID, CONTENTS_OPAQUE, CONTENTS_MOVEABLE, CONTENTS_DEBRIS, CONTENTS_MONSTER, CONTENTS_HITBOX, 402653442, CONTENTS_WATER)
+jeff.dists = {}
+jeff.nullvec = Vector() * -1
+jeff.servertime = 0
+jeff.cones = {}
+jeff.aimignore = nil
+jeff.realX = 0
+jeff.realY = 0
+jeff.isotope = true
+jeff.realspin = 0
+jeff.fakespin = 0
+jeff.radioIsValid = false
+jeff.devs = {
+    {"76561198307140396", "ceitine"},
+    {"76561197961359226", "Mint"},
+    {"76561198365395109", "Mint"},
+    {"76561198083822925", "Bread"},
+}
+jeff.freezeAngles = false
+jeff.realRenderY = jeff.ply:EyeAngles().y
+jeff.realRenderX = jeff.ply:EyeAngles().x
+jeff.pitches = {
+    "Safe Down",
+    "Safe Up",
+    "Safe Random",
+    "Unsafe Down",
+    "Unsafe Up",
+    "Unsafe Random",
+    "Isotope (joke)",
+}
+jeff.fakePitches = {
+    "Safe Down",
+    "Safe Up",
+    "Safe Random",
+    "Unsafe Down",
+    "Unsafe Up",
+    "Unsafe Random",
+}
+jeff.yaws = {
+    "Static",
+    "Zero",
+    "Angle Follow",
+    "Jitter",
+    "Spin",
+}
+jeff.fakeYaws = {
+    "Static",
+    "Zero",
+    "Angle Follow",
+    "Jitter",
+    "Spin",
+}
+jeff.addPos = 0
+jeff.timeFix = false
+for k, v in pairs(player.GetAll()) do v.espAlpha = 0 end
+
+// Modules
+require("hi")
+require("enginepred")
+require("dickwrap")
+
+// Fonts
+surface.CreateFont("icons", {
+    size = 60,
+    weight = 500,
+    antialias = true,
+    shadow = true,
+    font = "skrrtmenufont",
+})
+
+surface.CreateFont("icons2", {
+    size = 60,
+    weight = 500,
+    antialias = true,
+    shadow = true,
+    font = "badcache",
+})
+
+surface.CreateFont("menu_item", {
+    size = 15,
+    weight = 500,
+    antialias = true,
+    shadow = true,
+    font = "Arial",
+})
+
+surface.CreateFont("menu_title", {
+    size = 15,
+    weight = 500,
+    antialias = true,
+    shadow = true,
+    font = "Arial",
+})
+
+surface.CreateFont("menu_slider", {
+    size = 15,
+    weight = 500,
+    antialias = true,
+    outline = true,
+    font = "Arial",
+})
+
+surface.CreateFont("menu_combofont", {
+    size = 15,
+    weight = 500,
+    antialias = true,
+    shadow = true,
+    font = "Arial",
+})
+
+surface.CreateFont("menu_buttonfont", {
+    size = 15,
+    weight = 500,
+    antialias = true,
+    shadow = true,
+    font = "Arial",
+})
+
+surface.CreateFont("downarrow_font", {
+    size = 19,
+    weight = 500,
+    antialias = true,
+    shadow = true,
+    font = "Arial",
+})
+
+// Listening to Game Events
+gameevent.Listen("entity_killed")
+gameevent.Listen("player_connect")
+gameevent.Listen("player_disconnect")
+gameevent.Listen("player_changename")
+gameevent.Listen("server_cvar")
+gameevent.Listen("player_say")
+
+// Timers
+timer.Create("eventListTimer", 8, 0, function() jeff.messageJustSent = false end)
+timer.Create("closeInfo", 1, 15, function() jeff.infoCloseTimer = jeff.infoCloseTimer - 1 end)
+
+// Checking if the configs exist
+if(!file.Exists("encore", "DATA")) then
+    file.CreateDir("encore") 
+end
+
+if(!file.Exists("encore/legit.txt", "DATA")) then
+    file.Write("encore/legit.txt", " ")
+end
+
+if(!file.Exists("encore/rage.txt", "DATA")) then
+    file.Write("encore/rage.txt", " ")
+end
+
+if(!file.Exists("encore/hvh.txt", "DATA")) then
+    file.Write("encore/hvh.txt", " ")
+end
+
+if(!file.Exists("encore/secret.txt", "DATA")) then
+    file.Write("encore/secret.txt", " ")
+end
+
+if(!file.Exists("encore/fun.txt", "DATA")) then
+    file.Write("encore/fun.txt", " ")
+end
+
+if(!file.Exists("encore/loaded.txt", "DATA")) then
+    file.Write("encore/loaded.txt", "false")
+end
+
+// Functions
+    // Console Variables
+    function jeff.CreateVariable(name, default) CreateClientConVar("jeff".. "_".. name, default, false, false) end
+
+    // Hooking
+    function jeff.addHook(event, func) jeff.randomString = tostring(math.random(0, 9999999999)) hook.Add(event, jeff.randomString, func) table.insert(jeff.hooks, event) table.insert(jeff.hooks, jeff.randomString) end
+
+    // Messages
+    function jeff.printChat(text, color) chat.AddText(jeff.Black, "[", jeff.White, jeff.NameLen, jeff.Green, jeff.NameLen2, jeff.Black, "] ", color, text) end
+    function jeff.printConsole(text, color) MsgC(jeff.Black, "[", jeff.White, jeff.NameLen, jeff.Green, jeff.NameLen2, jeff.Black, "] ", color, text.. "\n") end
+
+    // Drawing
+    function jeff.drawRect(x, y, w, h, color) surface.SetDrawColor(color) surface.DrawRect(x, y, w, h) end
+    function jeff.drawMaterialRect(x, y, w, h, color, material) surface.SetDrawColor(color) surface.SetMaterial(material) surface.DrawTexturedRect(x, y, w, h) end
+    function jeff.drawText(x, y, text, font, color) surface.SetTextColor(color) surface.SetTextPos(x, y) surface.SetFont(font) surface.DrawText(text) end
+    function jeff.drawCircle(x, y, radius, quality) jeff.circle = {} for i = 1, quality do jeff.circle[i] = {} jeff.circle[i].x = x + math.cos(math.rad(i * 360) / quality) * radius jeff.circle[i].y = y + math.sin(math.rad(i * 360) / quality) * radius end return(jeff.circle) end
+    function jeff.drawPoly(poly, color) surface.SetDrawColor(color) surface.DrawPoly(poly) end
+
+    // From int to a bool
+    function jeff.fromIntToBool(cvar)
+        if(GetConVar(cvar):GetInt() == 1) then 
+            return(true)
+        else
+            return(false)
+        end
+    end
+
+    // Anti-Screengrab
+    render.Capture = function()
+        return
+    end
+
+    // Console Variables
+    // Misc
+        // Misc
+            jeff.CreateVariable("watermark", "1")
+            jeff.CreateVariable("focusonopen", "1")
+            jeff.CreateVariable("menufade", "1")
+            jeff.CreateVariable("fov", "0")
+            jeff.CreateVariable("bunnyhop", "0")
+            jeff.CreateVariable("airstrafe", "0")
+            jeff.CreateVariable("circlestrafe", "0")
+            jeff.CreateVariable("fakeduck", "0")
+            jeff.CreateVariable("fakeduckmethod", "1")
+            jeff.CreateVariable("eventlog", "0")
+            jeff.CreateVariable("lagexploit", "0")
+            jeff.CreateVariable("lagexploitvalue", "1")
+            jeff.CreateVariable("lagexploitdelay", "0")
+            jeff.CreateVariable("lagexploitdelayon", "1")
+            jeff.CreateVariable("fakelag", "0")
+            jeff.CreateVariable("fakelagvalue", "1")
+            jeff.CreateVariable("fakelagmethod", "1")
+            jeff.CreateVariable("fakelagtype", "1")
+            jeff.CreateVariable("traitorfinder", "0")
+            jeff.CreateVariable("emotespammer", "0")
+            jeff.CreateVariable("emote", "1")
+            jeff.CreateVariable("rapidfire", "0")
+            jeff.CreateVariable("180", "0")
+
+        // Settings
+            jeff.CreateVariable("anticac", "1")
+            jeff.CreateVariable("antiscreenshot", "1")
+            jeff.CreateVariable("currentmenu_R", "33")
+            jeff.CreateVariable("currentmenu_G", "155")
+            jeff.CreateVariable("currentmenu_B", "33")
+
+        // Presets
+            jeff.CreateVariable("chosenconfig", "1")
+            
+    // Visuals
+        // Other
+            jeff.CreateVariable("brightnessadjustmenton", "0")
+            jeff.CreateVariable("brightnessadjustment", "1")
+            jeff.CreateVariable("packetindicator", "0")
+            jeff.CreateVariable("fakeangles", "0")
+            jeff.CreateVariable("thirdperson", "0")
+            jeff.CreateVariable("thirdpersonvalue", "0")
+            jeff.CreateVariable("crosshair", "0")
+            jeff.CreateVariable("velocitycrosshair", "0")
+            jeff.CreateVariable("hitmarker", "0")
+            jeff.CreateVariable("angleinformation", "0")
+
+        // ESP
+            jeff.CreateVariable("boxesp", "0")
+            jeff.CreateVariable("nameesp", "0")
+            jeff.CreateVariable("healthbaresp", "0")
+            jeff.CreateVariable("armorbaresp", "0")
+            jeff.CreateVariable("distanceesp", "0")
+            jeff.CreateVariable("esp_r", "255")
+            jeff.CreateVariable("esp_g", "255")
+            jeff.CreateVariable("esp_b", "255")
+            jeff.CreateVariable("glowesp", "0")
+            jeff.CreateVariable("glow_r", "123")
+            jeff.CreateVariable("glow_g", "255")
+            jeff.CreateVariable("glow_b", "22")
+            jeff.CreateVariable("glow_ignorez", "0")
+            jeff.CreateVariable("hitboxesp", "0")
+            jeff.CreateVariable("hitbox_r", "255")
+            jeff.CreateVariable("hitbox_g", "255")
+            jeff.CreateVariable("hitbox_b", "255")
+            jeff.CreateVariable("skeletonesp", "0")
+            jeff.CreateVariable("skeleton_r", "255")
+            jeff.CreateVariable("skeleton_g", "255")
+            jeff.CreateVariable("skeleton_b", "255")
+            jeff.CreateVariable("dynamiclights", "0")
+            jeff.CreateVariable("dynamiclights_r", "255")
+            jeff.CreateVariable("dynamiclights_g", "255")
+            jeff.CreateVariable("dynamiclights_b", "255")
+            jeff.CreateVariable("dynamiclights_size", "180")
+
+        // Models
+            jeff.CreateVariable("chams", "0")
+            jeff.CreateVariable("chams_r_visible", "123")
+            jeff.CreateVariable("chams_g_visible", "255")
+            jeff.CreateVariable("chams_b_visible", "22")
+            jeff.CreateVariable("chams_ignorez", "0")
+            jeff.CreateVariable("chams_r_hidden", "80")
+            jeff.CreateVariable("chams_g_hidden", "150")
+            jeff.CreateVariable("chams_b_hidden", "80")
+            jeff.CreateVariable("chams_type", "1")
+
+    // Ragebot
+        // Aimbot
+            jeff.CreateVariable("aimbot", "0")
+            jeff.CreateVariable("aimbotfov", "5")
+            jeff.CreateVariable("silent", "0")
+            jeff.CreateVariable("autowall", "0")
+            jeff.CreateVariable("hitbox", "1")
+            jeff.CreateVariable("autofire", "0")
+            jeff.CreateVariable("bullettime", "0")
+            jeff.CreateVariable("velocityprediction", "0")
+            jeff.CreateVariable("aimkey", "1")
+            jeff.CreateVariable("ignorefriends", "0")
+            jeff.CreateVariable("ignoreadmins", "0")
+            jeff.CreateVariable("ignoreteam", "0")
+            jeff.CreateVariable("ignorespawning", "0")
+
+        // Accuracy
+            jeff.CreateVariable("norecoil", "0")
+            jeff.CreateVariable("predictspread", "0")
+
+        // Anti-Aim
+            jeff.CreateVariable("slowwalk", "0")
+            jeff.CreateVariable("antiaimon", "0")
+            jeff.CreateVariable("real_pitch", "1")
+            jeff.CreateVariable("fake_pitch", "1")
+            jeff.CreateVariable("real_yaw", "1")
+            jeff.CreateVariable("real_yaw_add", "0")
+            jeff.CreateVariable("fake_yaw", "1")
+            jeff.CreateVariable("fake_yaw_add", "0")
+            jeff.CreateVariable("real_yaw_range", "1")
+            jeff.CreateVariable("real_yaw_speed", "0")
+            jeff.CreateVariable("fake_yaw_range", "1")
+            jeff.CreateVariable("fake_yaw_speed", "0")
+
+    // Configs
+    function jeff.configSave()
+        // Saving all of the convars to one string.
+
+        // Misc
+            jeff.fullConfig = "/* Please don't edit these configs if you don't know what you're doing. */\n\n/* Miscellaneous */\n\n"
+
+            // Misc
+                jeff.fullConfig = jeff.fullConfig.. "    /* Miscellaneous */\n\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_watermark'):SetInt(".. GetConVar("jeff_watermark"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_focusonopen'):SetInt(".. GetConVar("jeff_focusonopen"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_menufade'):SetInt(".. GetConVar("jeff_menufade"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_fov'):SetInt(".. GetConVar("jeff_fov"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_bunnyhop'):SetInt(".. GetConVar("jeff_bunnyhop"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_airstrafe'):SetInt(".. GetConVar("jeff_airstrafe"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_circlestrafe'):SetInt(".. GetConVar("jeff_circlestrafe"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_fakeduck'):SetInt(".. GetConVar("jeff_fakeduck"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_fakeduckmethod'):SetInt(".. GetConVar("jeff_fakeduckmethod"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_eventlog'):SetInt(".. GetConVar("jeff_eventlog"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_lagexploit'):SetInt(".. GetConVar("jeff_lagexploit"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_lagexploitvalue'):SetInt(".. GetConVar("jeff_lagexploitvalue"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_lagexploitdelay'):SetInt(".. GetConVar("jeff_lagexploitdelay"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_lagexploitdelayon'):SetInt(".. GetConVar("jeff_lagexploitdelayon"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_fakelag'):SetInt(".. GetConVar("jeff_fakelag"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_fakelagvalue'):SetInt(".. GetConVar("jeff_fakelagvalue"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_fakelagmethod'):SetInt(".. GetConVar("jeff_fakelagmethod"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_fakelagtype'):SetInt(".. GetConVar("jeff_fakelagtype"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_emotespammer'):SetInt(".. GetConVar("jeff_emotespammer"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_emote'):SetInt(".. GetConVar("jeff_emote"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_rapidfire'):SetInt(".. GetConVar("jeff_rapidfire"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_180'):SetInt(".. GetConVar("jeff_180"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "\n"
+
+            // Settings
+                jeff.fullConfig = jeff.fullConfig.. "    /* Settings */\n\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_anticac'):SetInt(".. GetConVar("jeff_anticac"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_antiscreenshot'):SetInt(".. GetConVar("jeff_antiscreenshot"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_currentmenu_R'):SetInt(".. GetConVar("jeff_currentmenu_R"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_currentmenu_G'):SetInt(".. GetConVar("jeff_currentmenu_G"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_currentmenu_B'):SetInt(".. GetConVar("jeff_currentmenu_B"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "\n"
+
+            // Presets 
+                jeff.fullConfig = jeff.fullConfig.. "    /* Presets */\n\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_chosenconfig'):SetInt(".. GetConVar("jeff_chosenconfig"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "\n"
+
+            jeff.fullConfig = jeff.fullConfig.. "\n"
+
+        // Visuals
+            jeff.fullConfig = jeff.fullConfig.. "/* Visuals */\n\n"
+            
+            // Other
+                jeff.fullConfig = jeff.fullConfig.. "    /* Other */\n\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_brightnessadjustmenton'):SetInt(".. GetConVar("jeff_brightnessadjustmenton"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_brightnessadjustment'):SetInt(".. GetConVar("jeff_brightnessadjustment"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_packetindicator'):SetInt(".. GetConVar("jeff_packetindicator"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_fakeangles'):SetInt(".. GetConVar("jeff_fakeangles"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_thirdperson'):SetInt(".. GetConVar("jeff_thirdperson"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_thirdpersonvalue'):SetInt(".. GetConVar("jeff_thirdpersonvalue"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_crosshair'):SetInt(".. GetConVar("jeff_crosshair"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_velocitycrosshair'):SetInt(".. GetConVar("jeff_velocitycrosshair"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_hitmarker'):SetInt(".. GetConVar("jeff_hitmarker"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_angleinformation'):SetInt(".. GetConVar("jeff_angleinformation"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "\n"
+
+            // ESP
+                jeff.fullConfig = jeff.fullConfig.. "    /* ESP */\n\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_boxesp'):SetInt(".. GetConVar("jeff_boxesp"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_nameesp'):SetInt(".. GetConVar("jeff_nameesp"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_healthbaresp'):SetInt(".. GetConVar("jeff_healthbaresp"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_armorbaresp'):SetInt(".. GetConVar("jeff_armorbaresp"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_distanceesp'):SetInt(".. GetConVar("jeff_distanceesp"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_esp_r'):SetInt(".. GetConVar("jeff_esp_r"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_esp_g'):SetInt(".. GetConVar("jeff_esp_g"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_esp_b'):SetInt(".. GetConVar("jeff_esp_b"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_glowesp'):SetInt(".. GetConVar("jeff_glowesp"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_glow_r'):SetInt(".. GetConVar("jeff_glow_r"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_glow_g'):SetInt(".. GetConVar("jeff_glow_g"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_glow_b'):SetInt(".. GetConVar("jeff_glow_b"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_glow_ignorez'):SetInt(".. GetConVar("jeff_glow_ignorez"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_hitboxesp'):SetInt(".. GetConVar("jeff_hitboxesp"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_hitbox_r'):SetInt(".. GetConVar("jeff_hitbox_r"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_hitbox_g'):SetInt(".. GetConVar("jeff_hitbox_g"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_hitbox_b'):SetInt(".. GetConVar("jeff_hitbox_b"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_skeletonesp'):SetInt(".. GetConVar("jeff_skeletonesp"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_skeleton_r'):SetInt(".. GetConVar("jeff_skeleton_r"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_skeleton_g'):SetInt(".. GetConVar("jeff_skeleton_g"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_skeleton_b'):SetInt(".. GetConVar("jeff_skeleton_b"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_dynamiclights'):SetInt(".. GetConVar("jeff_dynamiclights"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_dynamiclights_r'):SetInt(".. GetConVar("jeff_dynamiclights_r"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_dynamiclights_g'):SetInt(".. GetConVar("jeff_dynamiclights_g"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_dynamiclights_b'):SetInt(".. GetConVar("jeff_dynamiclights_b"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_dynamiclights_size'):SetInt(".. GetConVar("jeff_dynamiclights_size"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "\n"
+
+            // Models
+                jeff.fullConfig = jeff.fullConfig.. "    /* Models */\n\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_chams'):SetInt(".. GetConVar("jeff_chams"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_chams_r_visible'):SetInt(".. GetConVar("jeff_chams_r_visible"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_chams_g_visible'):SetInt(".. GetConVar("jeff_chams_g_visible"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_chams_b_visible'):SetInt(".. GetConVar("jeff_chams_b_visible"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_chams_ignorez'):SetInt(".. GetConVar("jeff_chams_ignorez"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_chams_r_hidden'):SetInt(".. GetConVar("jeff_chams_r_hidden"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_chams_g_hidden'):SetInt(".. GetConVar("jeff_chams_g_hidden"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_chams_b_hidden'):SetInt(".. GetConVar("jeff_chams_b_hidden"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_chams_type'):SetInt(".. GetConVar("jeff_chams_type"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "\n"
+
+            jeff.fullConfig = jeff.fullConfig.. "\n"
+
+        // Ragebot
+            jeff.fullConfig = jeff.fullConfig.. "/* Ragebot */\n\n"
+
+            // Aimbot
+                jeff.fullConfig = jeff.fullConfig.. "    /* Aimbot */\n\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_aimbot'):SetInt(".. GetConVar("jeff_aimbot"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_aimbotfov'):SetInt(".. GetConVar("jeff_aimbotfov"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_silent'):SetInt(".. GetConVar("jeff_silent"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_autowall'):SetInt(".. GetConVar("jeff_autowall"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_hitbox'):SetInt(".. GetConVar("jeff_hitbox"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_autofire'):SetInt(".. GetConVar("jeff_autofire"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_bullettime'):SetInt(".. GetConVar("jeff_bullettime"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_velocityprediction'):SetInt(".. GetConVar("jeff_velocityprediction"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_aimkey'):SetInt(".. GetConVar("jeff_aimkey"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_ignorefriends'):SetInt(".. GetConVar("jeff_ignorefriends"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_ignoreadmins'):SetInt(".. GetConVar("jeff_ignoreadmins"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_ignoreteam'):SetInt(".. GetConVar("jeff_ignoreteam"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_ignorespawning'):SetInt(".. GetConVar("jeff_ignorespawning"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "\n"
+
+            // Accuracy
+                jeff.fullConfig = jeff.fullConfig.. "    /* Accuracy */\n\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_norecoil'):SetInt(".. GetConVar("jeff_norecoil"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_predictspread'):SetInt(".. GetConVar("jeff_predictspread"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "\n"
+            
+            // Other
+                jeff.fullConfig = jeff.fullConfig.. "    /* Other */\n\n"
+                jeff.fullConfig = jeff.fullConfig.. "       GetConVar('jeff_slowwalk'):SetInt(".. GetConVar("jeff_slowwalk"):GetInt().. ")\n"
+                jeff.fullConfig = jeff.fullConfig.. "\n"
+
+            jeff.fullConfig = jeff.fullConfig.. "\n"
+
+        // Writing it
+        file.Write("encore/".. jeff.configs[GetConVar("jeff_chosenconfig"):GetInt()].. ".txt", jeff.fullConfig)
+    end
+
+    function jeff.configReset()
+        file.Write("encore/".. jeff.configs[GetConVar("jeff_chosenconfig"):GetInt()].. ".txt", " ")
+    end
+
+    function jeff.configLoad()
+        RunString(file.Read("encore/".. jeff.configs[GetConVar("jeff_chosenconfig"):GetInt()].. ".txt", "DATA"), "RunString", false)
+    end
+
+    function jeff.unloadCheat()
+        for i = 0, #jeff.hooks do
+            hook.Remove(jeff.hooks[i], jeff.hooks[i + 1])
+        end
+        
+        jeff.ChangeSkybox("sky_day01_04")
+        for k,v in pairs(game.GetWorld():GetMaterials()) do
+            Material(v):SetVector("$color", Vector(1, 1, 1))
+        end
+
+        jeff.menuClosing = true
+        -- jeff.StopSong()
+        memesendpacket = true
+        RunConsoleCommand("host_timescale", "1")
+    end
+
+    // Cheats
+    function jeff.oneEighty(ucmd)
+        if(input.IsKeyDown(KEY_LALT) && GetConVar("jeff_antiaimon"):GetInt() == 0) then
+            if(!jeff.timeFix) then
+                jeff.ply:SetEyeAngles(jeff.ply:EyeAngles() - Angle(0, 180, 0))
+            end
+            jeff.cm.SetViewAngles(ucmd, jeff.ply:EyeAngles())
+            
+            jeff.timeFix = true
+            timer.Simple(1, function() jeff.timeFix = false end)
+        end
+    end
+
+    function jeff.CanHop()
+		return(jeff.ply:WaterLevel() < 2 && jeff.ply:GetMoveType() ~= 8 && jeff.ply:GetMoveType() ~= 9)
+	end
+
+    function jeff.Bunnyhop(cmd)
+	    if(GetConVar("jeff_anticac"):GetInt() == 1) then return end
+	    if(!jeff.CanHop()) then return end
+	    if(!jeff.ply:IsOnGround() && cmd:KeyDown(IN_JUMP)) then
+	        cmd:RemoveKey(IN_JUMP)
+	    end
+	end
+
+    function jeff.CanStrafe()
+	    return(jeff.ply:WaterLevel() < 2 && jeff.ply:GetMoveType() ~= 8 && jeff.ply:GetMoveType() ~= 9 && jeff.ply:GetMoveType() ~= 10)
+	end
+	    
+	function jeff.Airstrafe(ucmd)
+        if(GetConVar("jeff_anticac"):GetInt() == 1) then return end
+	    if(jeff.strafing) then return end
+	    if(!jeff.CanStrafe()) then return end
+	    if(!jeff.ply:IsOnGround()) then
+	        if(ucmd:GetMouseX() > 1 || ucmd:GetMouseX() < -1) then
+	            if(ucmd:GetMouseX() < 0) then
+	                ucmd:SetSideMove(-400)
+	            else
+	                ucmd:SetSideMove(400)
+	            end
+	        else
+	            ucmd:SetForwardMove(5850 / jeff.ply:GetVelocity():Length2D())
+	            ucmd:SetSideMove((ucmd:CommandNumber() % 2) == 0 && -400 || 400)
+	        end
+	    else
+	        if(ucmd:KeyDown(2)) then
+                ucmd:SetForwardMove(400)
+	        end
+	    end
+	end
+
+    function jeff.ClampMove(cmd)
+		if (cmd:GetForwardMove() > jeff.cl_forwardspeed_value) then
+			cmd:SetForwardMove(jeff.cl_forwardspeed_value)
+		end
+		if(cmd:GetSideMove() > jeff.cl_sidespeed_value) then
+			cmd:SetSideMove(jeff.cl_sidespeed_value)
+		end
+	end
+		
+	function jeff.FixMove(cmd, rotation)
+		jeff.rot_cos = math.cos(rotation)
+		jeff.rot_sin = math.sin(rotation)
+		jeff.cur_forwardmove = cmd:GetForwardMove()
+		jeff.cur_sidemove = cmd:GetSideMove()
+		cmd:SetForwardMove(((jeff.rot_cos * jeff.cur_forwardmove) - (jeff.rot_sin * jeff.cur_sidemove)))
+		cmd:SetSideMove(((jeff.rot_sin * jeff.cur_forwardmove) + (jeff.rot_cos * jeff.cur_sidemove)))
+	end
+		
+	function jeff.Circlestrafe(cmd)
+        if(GetConVar("jeff_anticac"):GetInt() == 1) then return end
+		if(input.IsKeyDown(KEY_G)) then
+			jeff.strafing = true
+			jeff.CircleStrafeVal = jeff.CircleStrafeVal + jeff.CircleStrafeSpeed
+		    if((jeff.CircleStrafeVal > 0) && ((jeff.CircleStrafeVal / jeff.CircleStrafeSpeed) > 361)) then
+				jeff.CircleStrafeVal = 0
+			end
+			jeff.FixMove(cmd, math.rad((jeff.CircleStrafeVal - engine.TickInterval())))
+			return(false)
+		else
+			jeff.strafing = false
+			jeff.CircleStrafeVal = 0
+		end
+		return(true)
+	end
+
+    function jeff.ChangeSkybox(skyboxname)
+        for i = 1, 6 do
+            jeff.D = Material("skybox/".. skyboxname.. jeff.SourceSkyPre[i]):GetTexture("$basetexture")
+            jeff.SourceSkyMat[i]:SetTexture("$basetexture", jeff.D)
+        end
+    end
+
+	function jeff.Fakeduck()
+        if(GetConVar("jeff_fakeduckmethod"):GetInt() == 1) then
+            if(jeff.ply:IsOnGround()) then
+                RunConsoleCommand("+duck")
+            else
+                RunConsoleCommand("-duck")
+            end
+        elseif(GetConVar("jeff_fakeduckmethod"):GetInt() == 2) then
+            if(jeff.ply:IsOnGround()) then
+                jeff.grounded = false
+            else
+                if(!jeff.grounded) then
+                    jeff.hasJumped = true
+                    RunConsoleCommand("+duck")
+                    jeff.grounded = true
+                end
+
+                if(jeff.hasJumped) then timer.Simple(0.3, function() RunConsoleCommand("-duck") jeff.hasJumped = false end) end
+            end
+        end
+	end
+
+    function jeff.Slowwalk(cmd)
+        if(input.IsKeyDown(KEY_V)) then
+            if(input.IsKeyDown(KEY_A)) then
+                cmd:SetSideMove(-35) 
+            end
+
+            if(input.IsKeyDown(KEY_D)) then
+                cmd:SetSideMove(35)
+            end
+
+            if(input.IsKeyDown(KEY_W)) then
+                cmd:SetForwardMove(35)
+            end
+
+            if(input.IsKeyDown(KEY_S)) then
+                cmd:SetForwardMove(-35)
+            end
+
+            jeff.freezeAngles = true
+        else
+            jeff.freezeAngles = false
+        end
+    end
+
+    function jeff.DrawFakeAngle(v)
+        cam.Start3D()
+            if(v:IsValid()) then
+                render.MaterialOverride(jeff.chamsMaterial2)
+                render.SetColorModulation(0.8, 0.8, 0.8, 0.8)
+                v:DrawModel()
+            end
+        cam.End3D()
+    end
+
+    function jeff.normalizeAngle(ang)
+        ang.p = math.NormalizeAngle(ang.p)
+        ang.p = math.Clamp(ang.p, -89, 89)
+        ang.y = math.NormalizeAngle(ang.y)
+    end
+
+    function jeff.NormalizeAngle(ang)
+        ang.x = math.NormalizeAngle(ang.x)
+        ang.p = math.Clamp(ang.p, -89, 89)
+    end
+
+    function jeff.fasAutowall(wep, startPos, aimPos, ply)
+        jeff.traces = {}
+        jeff.traceResults = {}
+        jeff.dir = (aimPos - startPos):GetNormalized()
+        jeff.traces[1] = {start = startPos, filter = jeff.ply, mask = jeff.trace_normal, endpos = aimPos,}
+        jeff.traceResults[1] = util.TraceLine(jeff.traces[1])
+        if(NoPenetration[jeff.traceResults[1].MatType]) then return(false) end
+        if(-jeff.dir:DotProduct(jeff.traceResults[1].HitNormal) <= .26) then return(false) end
+        jeff.traces[2] = {start = jeff.traceResults[1].HitPos, endpos = jeff.traceResults[1].HitPos + jeff.dir * wep.PenStr * (PenMod[jeff.traceResults[1].MatType] || 1) * wep.PenMod, filter = jeff.ply, mask = jeff.trace_walls,}
+        jeff.traceResults[2] = util.TraceLine(jeff.traces[2])
+        jeff.traces[3] = {start = jeff.traceResults[2].HitPos, endpos = jeff.traceResults[2].HitPos + jeff.dir * .1, filter = jeff.ply, mask = jeff.trace_normal,}
+        jeff.traceResults [3] = util.TraceLine(jeff.traces[3])
+        jeff.traces[4] = {start = jeff.traceResults[2].HitPos, endpos = aimPos, filter = jeff.ply, mask = MASK_SHOT,}
+        jeff.traceResults[4] = util.TraceLine(jeff.traces[4])
+        if(jeff.traceResults[4].Entity != ply) then return(false) end
+        return(!jeff.traceResults[3].Hit)
+    end
+
+    function jeff.m9kAutowall(wep)
+        jeff.wep = jeff.ply:GetActiveWeapon()
+        jeff.trace = {
+            endpos = aimPos, 
+            start = jeff.ply:EyePos(), 
+            mask = MASK_SHOT, 
+            filter = jeff.ply,
+        }
+        return(jeff.wep:BulletPenetrate(10, nil, util.TraceLine(jeff.trace), DamageInfo()))
+    end
+
+    function GetPos(v)
+        if(GetConVar("jeff_hitbox"):GetInt() == 2) then return(jeff.em.LocalToWorld(v, jeff.em.OBBCenter(v))) end
+        jeff.eyes = jeff.em.LookupAttachment(v, "eyes")
+        if(!jeff.eyes) then return(jeff.em.LocalToWorld(v, jeff.em.OBBCenter(v))) end
+        jeff.pos = jeff.em.GetAttachment(v, jeff.eyes)
+        if(!jeff.pos) then return(jeff.em.LocalToWorld(v, jeff.em.OBBCenter(v))) end
+        return(jeff.pos.Pos)
+    end
+
+    function jeff.FixMovement(ucmd)
+        jeff.vec = Vector(jeff.cm.GetForwardMove(ucmd), jeff.cm.GetSideMove(ucmd), 0)
+        jeff.vel = math.sqrt(jeff.vec.x * jeff.vec.x + jeff.vec.y * jeff.vec.y)
+        jeff.mang = jeff.vm.Angle(jeff.vec)
+        jeff.yaw = jeff.cm.GetViewAngles(ucmd).y - jeff.fa.y + jeff.mang.y
+        if(((jeff.cm.GetViewAngles(ucmd).p + 90) % 360) > 180) then
+            jeff.yaw = 180 - jeff.yaw
+        end
+        jeff.yaw = ((jeff.yaw + 180) % 360) - 180
+        ucmd:SetForwardMove(math.cos(math.rad(jeff.yaw)) * jeff.vel)
+        ucmd:SetSideMove(math.sin(math.rad(jeff.yaw)) * jeff.vel)
+    end
+
+    function jeff.Valid(v)
+        jeff.wep = jeff.ply:GetActiveWeapon()
+        if(!v || !jeff.em.IsValid(v) || v == jeff.ply || jeff.em.Health(v) < 1 || jeff.em.IsDormant(v) || jeff.pm.Team(v) == 1002 || (v == jeff.aimignore)) then return false end
+        if(GetConVar("jeff_ignoreteam"):GetInt() == 1) then
+            if(jeff.pm.Team(v) == jeff.pm.Team(jeff.ply)) then return(false) end
+        end
+        if(GetConVar("jeff_ignorefriends"):GetInt() == 1) then
+            if(jeff.pm.GetFriendStatus(v) == "friend") then return(false) end
+        end
+        if(GetConVar("jeff_ignoreadmins"):GetInt() == 1) then
+            if(jeff.pm.IsAdmin(v)) then return(false) end
+        end
+        if(GetConVar("jeff_ignorespawning"):GetInt() == 1) then
+            if(jeff.em.GetColor(v).a < 255) then return(false) end
+        end
+        jeff.tr = {
+            start = jeff.em.EyePos(jeff.ply),
+            endpos = GetPos(v),
+            mask = MASK_SHOT,
+            filter = {jeff.ply, v},
+        }
+        if(util.TraceLine(jeff.tr).Fraction == 1) then
+            return(true)
+        elseif(jeff.wep && jeff.wep:IsValid() && jeff.wep.PenStr) then
+            return(jeff.fasAutowall(jeff.wep, jeff.tr.start, jeff.tr.endpos, v))
+        elseif(jeff.wep && jeff.wep:IsValid() && jeff.wep.BulletPenetrate) then
+            return(jeff.m9kAutowall(jeff.wep, jeff.tr.start, jeff.tr.endpos, v))
+        end
+        return(false)
+    end
+    
+    function jeff.gettarget()
+	    if(jeff.Valid(jeff.aimtarget)) then return end
+
+		jeff.allplys = player.GetAll()
+		jeff.avaib = {}
+		for k, v in next, jeff.allplys do
+			jeff.avaib[math.random(100)] = v
+		end
+		
+		for k, v in next, jeff.avaib do
+			if(jeff.Valid(v)) then
+				jeff.aimtarget = v
+			end
+		end
+    end
+
+    GAMEMODE["EntityFireBullets"] = function(self, p, data)
+        jeff.aimignore = jeff.aimtarget
+        jeff.w = jeff.pm.GetActiveWeapon(jeff.ply)
+        jeff.Spread = data.Spread * -1
+        if(!jeff.w || !jeff.em.IsValid(jeff.w) || jeff.cones[jeff.em.GetClass(jeff.w)] == jeff.Spread || jeff.Spread == jeff.nullvec) then return end
+        jeff.cones[jeff.em.GetClass(jeff.w)] = jeff.Spread
+    end
+
+    function jeff.GetAngle(ang)
+        if(GetConVar("jeff_norecoil"):GetInt() == 0) then return ang + jeff.pm.GetPunchAngle(jeff.ply) end
+        return(ang)
+    end
+
+    function jeff.PredictSpread(ucmd, ang)
+        jeff.w = jeff.pm.GetActiveWeapon(jeff.ply)
+        if(!jeff.w || !jeff.em.IsValid(jeff.w) || !jeff.cones[jeff.em.GetClass(jeff.w)] || GetConVar("jeff_predictspread"):GetInt() != 1) then return(jeff.am.Forward(ang)) end
+        return(dickwrap.Predict(ucmd, jeff.am.Forward(ang), jeff.cones[jeff.em.GetClass(jeff.w)]))
+    end
+
+    function jeff.Autofire(ucmd)
+        jeff.cm.SetButtons(ucmd, bit.bor(jeff.cm.GetButtons(ucmd), 1))
+    end
+
+    function jeff.PredictPos(pos)
+        pos = pos - (jeff.ply:GetVelocity() * engine.TickInterval())
+        return(pos)
+    end
+
+    function jeff.CheckFov(v)
+        if(GetConVar("jeff_aimbotfov"):GetInt() < 180) then
+            jeff.lpang = jeff.ply:GetAngles()
+            jeff.ang = (v:GetPos() - jeff.ply:GetPos()):Angle()
+            jeff.ady = math.abs(math.NormalizeAngle(jeff.lpang.y - jeff.ang.y))
+            jeff.adp = math.abs(math.NormalizeAngle(jeff.lpang.p - jeff.ang.p ))
+
+            if(jeff.ady > GetConVar("jeff_aimbotfov"):GetInt() || jeff.adp > GetConVar("jeff_aimbotfov"):GetInt()) then return(false) end
+        end
+
+        return(true)
+    end
+
+    function jeff.CheckForKey()
+        if(GetConVar("jeff_aimkey"):GetInt() == 1 && input.IsMouseDown(MOUSE_4)) then
+            return(true)
+        elseif(GetConVar("jeff_aimkey"):GetInt() == 0) then
+            return(true)
+        end
+
+        return(false)
+    end
+
+    function jeff.bulletTime()
+	    jeff.w = jeff.pm.GetActiveWeapon(jeff.ply)
+        if(!jeff.w || !jeff.em.IsValid(jeff.w) || GetConVar("jeff_bullettime"):GetInt() != 1) then return(true) end
+        return(jeff.servertime >= jeff.wm.GetNextPrimaryFire(jeff.w))
+    end
+
+    function jeff.Aimbot(ucmd)
+        if(jeff.cm.CommandNumber(ucmd) == 0) then return end
+        if(jeff.ply:Health() <= 0) then return end
+
+        jeff.gettarget()
+        jeff.antiaimIgnore = false
+
+        if(jeff.aimtarget && jeff.bulletTime() && IsValid(jeff.ply:GetActiveWeapon()) && jeff.ply:GetActiveWeapon():GetClass() != "weapon_physgun" && jeff.ply:GetActiveWeapon():GetClass() != "gmod_tool" && jeff.CheckForKey() && jeff.CheckFov(jeff.aimtarget)) then
+            jeff.antiaimIgnore = true
+            jeff.pos = GetPos(jeff.aimtarget) - jeff.em.EyePos(jeff.ply)
+            if(GetConVar("jeff_velocityprediction"):GetInt()) then
+                jeff.PredictPos(jeff.pos)
+            end
+            jeff.ang = jeff.vm.Angle(jeff.PredictSpread(ucmd, jeff.vm.Angle(jeff.pos)))
+            jeff.NormalizeAngle(jeff.ang)
+            jeff.cm.SetViewAngles(ucmd, jeff.ang)
+
+            if(GetConVar("jeff_autofire"):GetInt() == 1) then
+                jeff.Autofire(ucmd)
+            end
+            
+            if(GetConVar("jeff_silent"):GetInt() == 0) then
+                jeff.fa = jeff.ang
+            end
+        end
+
+        jeff.aimtarget = nil
+    end
+
+    function encore(ucmd)
+        if(!jeff.fa) then jeff.fa = jeff.cm.GetViewAngles(ucmd) end
+        jeff.fa = jeff.fa + Angle(jeff.cm.GetMouseY(ucmd) * .023, jeff.cm.GetMouseX(ucmd) * -.023, 0)
+        jeff.NormalizeAngle(jeff.fa)
+
+        if(jeff.cm.CommandNumber(ucmd) == 0) then
+            jeff.cm.SetViewAngles(ucmd, jeff.GetAngle(jeff.fa))
+            return
+        end
+        
+        if(jeff.cm.KeyDown(ucmd, 1)) then
+            jeff.ang = jeff.GetAngle(jeff.vm.Angle(jeff.PredictSpread(ucmd, jeff.fa)))
+            jeff.NormalizeAngle(jeff.ang)
+            jeff.cm.SetViewAngles(ucmd,jeff. ang)
+        end
+    end
+
+    function jeff.eventListOpen()
+        jeff.eventList = vgui.Create("DFrame")
+        jeff.eventList:SetDraggable(false)
+        jeff.eventList:ShowCloseButton(false)
+        jeff.eventList:SetPos(-5, 22)
+        jeff.eventList:SetSize(800, 300)
+        jeff.eventList:SetTitle("")
+        jeff.eventList.Paint = function() end
+
+        jeff.Events = vgui.Create("RichText", jeff.eventList)
+        jeff.Events:Dock(FILL)
+        jeff.Events:SetVerticalScrollbarEnabled(false) 
+        jeff.Events.Paint = function()
+            if(GetConVar("jeff_watermark"):GetInt() == 1) then jeff.eventList:SetPos(-5, 22) else jeff.eventList:SetPos(-5, -27) end
+            if(!jeff.messageJustSent) then if(jeff.EventsAlpha > 0) then jeff.EventsAlpha = jeff.EventsAlpha - 4 end end
+            if(jeff.messages > 10 && jeff.messageJustSent) then jeff.Events:GotoTextEnd() end
+            jeff.Events:SetAlpha(jeff.EventsAlpha)
+        end
+
+        jeff.Events.PerformLayout = function(self)
+            self:SetFontInternal("ChatFont")
+        end
+
+        function jeff.addEventlistMessage(message)
+            timer.Stop("eventListTimer")
+            jeff.messageJustSent = true
+            jeff.messages = jeff.messages + 1
+            jeff.EventsAlpha = 255
+            if(jeff.messageJustSent) then timer.Start("eventListTimer") end
+            jeff.Events:InsertColorChange(0, 0, 0, 255)
+            jeff.Events:AppendText("[")
+            
+            jeff.Events:InsertColorChange(255, 255, 255, 255)
+            jeff.Events:AppendText("")
+
+            jeff.Events:InsertColorChange(123, 255, 22, 255)
+            jeff.Events:AppendText("encore")
+
+            jeff.Events:InsertColorChange(0, 0, 0, 255)
+            jeff.Events:AppendText("]")
+
+            jeff.Events:InsertColorChange(255, 255, 255, 255)
+            jeff.Events:AppendText(" ".. message.. "\n")
+            jeff.printConsole(message, Color(255, 255, 255))
+        end
+    end
+
+    function jeff.HitboxESP(v)
+        cam.Start3D()
+            for i = 0, v:GetHitBoxGroupCount() - 1 do
+                for _i = 0, v:GetHitBoxCount(i) - 1 do
+                    bone = v:GetHitBoxBone(_i, i)
+                    if(!bone) then continue end
+                    min, max = v:GetHitBoxBounds(_i, i)
+                                
+                    if (v:GetBonePosition(bone)) then
+                        pos, ang = v:GetBonePosition(bone)
+                                    
+                        render.DrawWireframeBox(pos, ang, min, max, Color(GetConVar("jeff_hitbox_r"):GetInt(), GetConVar("jeff_hitbox_g"):GetInt(), GetConVar("jeff_hitbox_b"):GetInt(), v.espAlpha))
+                    end
+                end
+            end
+        cam.End3D()
+    end
+
+    function jeff.DynamicLights(v)
+        dlight = DynamicLight(v)
+			
+		if(dlight) then
+			dlight.pos = v:GetPos()
+			dlight.r = GetConVar("jeff_dynamiclights_r"):GetInt()
+			dlight.g = GetConVar("jeff_dynamiclights_g"):GetInt()
+			dlight.b = GetConVar("jeff_dynamiclights_b"):GetInt()
+			dlight.brightness = 2
+			dlight.Decay = 0.2
+			dlight.Size = GetConVar("jeff_dynamiclights_size"):GetInt() / 3.6
+			dlight.DieTime = CurTime() + 0.5
+		end
+    end
+
+    function jeff.SkeletonESP(v)
+        for i = 0, v:GetBoneCount() do
+			bone = v:GetBoneParent(i)
+					
+			if(!bone) then continue end
+			if(bone == -1) then continue end
+					
+			bone1, bone2 = v:GetBonePosition(i), v:GetBonePosition(bone)
+			lstart = bone1:ToScreen()
+			lend = bone2:ToScreen()
+					
+			if(v:GetPos() == bone1) then continue end
+					
+			surface.SetDrawColor(GetConVar("jeff_skeleton_r"):GetInt(), GetConVar("jeff_skeleton_g"):GetInt(), GetConVar("jeff_skeleton_b"):GetInt(), v.espAlpha)
+			surface.DrawLine(lstart.x, lstart.y, lend.x, lend.y)
+		end
+    end
+
+    function jeff.PlayHitmarkerSound()
+        if(jeff.hitmarkerSoundPlaying) then return end
+        sound.PlayFile("../addons/encore/resources/hitmarker.wav", "", function(station)
+            if(IsValid(station)) then station:Play() jeff.hitmarkerSoundPlaying = true end
+        end)
+    end
+
+    function jeff.fakelagmemesendpacket(ucmd)
+        jeff.fakelagTick = jeff.fakelagTick + 1
+
+        if(jeff.fakelagTick > GetConVar("jeff_fakelagvalue"):GetInt() / 18) then
+            jeff.fakelagTick = 0
+        else
+            if(GetConVar("jeff_fakelagmethod"):GetInt() == 1) then
+                if(jeff.ply:IsOnGround()) then
+                    memesendpacket = false
+                end
+            elseif(GetConVar("jeff_fakelagmethod"):GetInt() == 2) then
+                if(!jeff.ply:IsOnGround()) then
+                    memesendpacket = false
+                end
+            elseif(GetConVar("jeff_fakelagmethod"):GetInt() == 3) then
+                if(jeff.ply:GetVelocity():Length() > 50) then
+                    memesendpacket = false
+                end
+            elseif(GetConVar("jeff_fakelagmethod"):GetInt() == 4) then
+                if(jeff.ply:GetVelocity():Length() < 20) then
+                    memesendpacket = false
+                end
+            end
+        end            
+
+        return(true)
+    end
+
+    function jeff.fakelaghosttimescale(ucmd)
+        jeff.fakelagTick = jeff.fakelagTick + 1
+
+        if(jeff.fakelagTick > GetConVar("jeff_fakelagvalue"):GetInt() / 18) then
+            jeff.fakelagTick = 0
+        else
+            if(GetConVar("jeff_fakelagmethod"):GetInt() == 1) then
+                if(jeff.ply:IsOnGround()) then
+                    jeff.hostTimescale = false
+                end
+            elseif(GetConVar("jeff_fakelagmethod"):GetInt() == 2) then
+                if(!jeff.ply:IsOnGround()) then
+                    jeff.hostTimescale = false
+                end
+            elseif(GetConVar("jeff_fakelagmethod"):GetInt() == 3) then
+                if(jeff.ply:GetVelocity():Length() > 50) then
+                    jeff.hostTimescale = false
+                end
+            elseif(GetConVar("jeff_fakelagmethod"):GetInt() == 3) then
+                if(jeff.ply:GetVelocity():Length() < 20) then
+                    jeff.hostTimescale = false
+                end
+            end
+        end
+
+        return(true)
+    end
+
+    function jeff.lagexploit()
+        if(GetConVar("jeff_lagexploitdelayon"):GetInt() == 1) then
+            if(jeff.Fix && GetConVar("jeff_lagexploit"):GetInt() == 1) then
+                timer.Simple(GetConVar("jeff_lagexploitdelay"):GetInt() / 36, function() jeff.Fix = false end)
+            elseif(!jeff.Fix && GetConVar("jeff_lagexploit"):GetInt() == 1) then
+                timer.Simple(GetConVar("jeff_lagexploitdelay"):GetInt() / 36, function() jeff.Fix = true end)
+            elseif(GetConVar("jeff_lagexploit"):GetInt() == 0) then
+                jeff.Fix = false
+            end
+
+            pspeed = jeff.Fix
+            pspeedspeed = GetConVar("jeff_lagexploitvalue"):GetInt()
+        else
+            pspeed = jeff.fromIntToBool("jeff_lagexploit")
+            pspeedspeed = GetConVar("jeff_lagexploitvalue"):GetInt()
+        end
+    end
+
+    function jeff.Rapidfire(ucmd)
+        if(jeff.ply:KeyDown(IN_ATTACK)) then
+            if(IsValid(jeff.ply:GetActiveWeapon()) && jeff.ply:GetActiveWeapon():GetClass() != "weapon_physgun") then
+                if(jeff.toggled == 0) then
+                    ucmd:SetButtons(bit.bor(ucmd:GetButtons(), IN_ATTACK))
+                    jeff.toggled = 1
+                else
+                    ucmd:SetButtons(bit.band(ucmd:GetButtons(), bit.bnot(IN_ATTACK)))
+                    jeff.toggled = 0
+                end
+            end
+        end
+    end
+
+    function jeff.BoxESP(v)
+        jeff.pos = jeff.em.GetPos(v)
+        jeff.pos, jeff.pos2 = jeff.vm.ToScreen(jeff.pos - Vector(0, 0, 5)), jeff.vm.ToScreen(jeff.pos + Vector(0, 0, 70))
+        jeff.h = jeff.pos.y - jeff.pos2.y
+        jeff.w = jeff.h / 2.2
+
+        if(jeff.pm.GetFriendStatus(v) == "friend") then
+            surface.SetDrawColor(80, 125, 230, v.espAlpha)
+        else
+            surface.SetDrawColor(GetConVar("jeff_esp_r"):GetInt(), GetConVar("jeff_esp_g"):GetInt(), GetConVar("jeff_esp_b"):GetInt(), v.espAlpha)
+        end
+        surface.DrawOutlinedRect(jeff.pos.x - jeff.w / 2, jeff.pos.y - jeff.h, jeff.w, jeff.h)
+        surface.SetDrawColor(Color(30, 30, 30, v.espAlpha))
+        surface.DrawOutlinedRect(jeff.pos.x - jeff.w / 2 - 1, jeff.pos.y - jeff.h - 1, jeff.w + 2, jeff.h + 2)
+        surface.DrawOutlinedRect(jeff.pos.x - jeff.w / 2 + 1, jeff.pos.y - jeff.h + 1, jeff.w - 2, jeff.h - 2)
+    end
+
+    function jeff.NameESP(v)
+        jeff.pos = jeff.em.GetPos(v)
+        jeff.pos, jeff.pos2 = jeff.vm.ToScreen(jeff.pos - Vector(0, 0, 5)), jeff.vm.ToScreen(jeff.pos + Vector(0, 0, 70))
+        jeff.h = jeff.pos.y - jeff.pos2.y
+        jeff.w = jeff.h / 2.2
+        jeff.tw, jeff.th = surface.GetTextSize(v:Nick())
+
+        if(jeff.pm.GetFriendStatus(v) == "friend") then
+            jeff.drawText(jeff.pos.x - jeff.tw / 2, jeff.pos.y - jeff.h - 16, jeff.pm.Name(v), "ChatFont", Color(80, 125, 230, v.espAlpha))
+        else
+            jeff.drawText(jeff.pos.x - jeff.tw / 2, jeff.pos.y - jeff.h - 16, jeff.pm.Name(v), "ChatFont", Color(GetConVar("jeff_esp_r"):GetInt(), GetConVar("jeff_esp_g"):GetInt(), GetConVar("jeff_esp_b"):GetInt(), v.espAlpha))
+        end
+    end
+
+    function jeff.IsDev()
+        for k, v in pairs(player.GetAll()) do
+            if(!v:IsPlayer()) then
+                for i = 1, #jeff.devs do
+                    if(v:SteamID64() == jeff.devs[i][1]) then
+                        return(true)
+                    else
+                        return(false)
+                    end
+                end
+            end
+        end
+    end
+
+    function jeff.DevESP(v)
+        if(!jeff.IsDev()) then return end
+
+        jeff.pos = jeff.em.GetPos(v)
+        jeff.pos, jeff.pos2 = jeff.vm.ToScreen(jeff.pos - Vector(0, 0, 5)), jeff.vm.ToScreen(jeff.pos + Vector(0, 0, 70))
+        jeff.h = jeff.pos.y - jeff.pos2.y
+        jeff.w = jeff.h / 2.2
+        jeff.tw, jeff.th = surface.GetTextSize("DEV")
+
+        jeff.drawText(jeff.pos.x - jeff.tw / 2, jeff.pos.y - jeff.h - 29, "DEV", "ChatFont", Color(255, 80, 80, v.espAlpha))
+    end
+
+    function jeff.HealthbarESP(v)
+        jeff.pos = jeff.em.GetPos(v)
+        jeff.pos, jeff.pos2 = jeff.vm.ToScreen(jeff.pos - Vector(0, 0, 5)), jeff.vm.ToScreen(jeff.pos + Vector(0, 0, 70))
+        jeff.h = jeff.pos.y - jeff.pos2.y
+        jeff.w = jeff.h / 2.2
+        jeff.hp = jeff.em.Health(v) * jeff.h / 100
+
+        if(jeff.hp > jeff.h) then jeff.hp = jeff.h end
+        jeff.diff = jeff.h - jeff.hp
+        
+        if(v:Health() > 0) then
+            jeff.drawRect(jeff.pos.x - jeff.w / 2 - 6, jeff.pos.y - jeff.h - 1, 4, jeff.h + 2, Color(0, 0, 0, v.espAlpha))
+            jeff.drawRect(jeff.pos.x - jeff.w / 2 - 5, jeff.pos.y - jeff.h + jeff.diff, 2, jeff.hp, Color((100 - jeff.em.Health(v)) * 2.55, jeff.em.Health(v) * 2.55, 0, v.espAlpha))
+        end
+    end
+
+    function jeff.ArmorbarESP(v)
+        jeff.pos = jeff.em.GetPos(v)
+        jeff.pos, jeff.pos2 = jeff.vm.ToScreen(jeff.pos - Vector(0, 0, 5)), jeff.vm.ToScreen(jeff.pos + Vector(0, 0, 70))
+        jeff.h = jeff.pos.y - jeff.pos2.y
+        jeff.w = jeff.h / 2.2
+        jeff.armor = v:Armor() * jeff.w / 100
+
+        if(jeff.armor > jeff.w) then jeff.armor = jeff.w end
+        jeff.diff = jeff.w - jeff.armor
+        
+        if(v:Armor() > 0) then
+            jeff.drawRect(jeff.pos.x - jeff.w / 2 - 1, jeff.pos.y + 2, jeff.w + 2, 4, Color(30, 30, 30, v.espAlpha))
+            jeff.drawRect(jeff.pos.x - jeff.w / 2, jeff.pos.y + 3, jeff.armor, 2, Color(120, 120, 230, v.espAlpha))
+        end
+    end
+
+    function jeff.DistanceESP(v)
+        jeff.pos = jeff.em.GetPos(v)
+        jeff.pos, jeff.pos2 = jeff.vm.ToScreen(jeff.pos - Vector(0, 0, 5)), jeff.vm.ToScreen(jeff.pos + Vector(0, 0, 70))
+        jeff.h = jeff.pos.y - jeff.pos2.y
+        jeff.w = jeff.h / 2.2
+        jeff.fullDist = math.Round(Vector(jeff.ply:GetPos()):Distance(Vector(v:GetPos())) / 16).. "FT"
+        jeff.tw, jeff.th = surface.GetTextSize(jeff.fullDist)
+
+        if(v:Armor() > 0 && GetConVar("jeff_armorbaresp"):GetInt() == 1) then
+            if(jeff.pm.GetFriendStatus(v) == "friend") then
+                jeff.drawText(jeff.pos.x - jeff.tw / 2, jeff.pos.y - jeff.th / 2 + 13, jeff.fullDist, "ChatFont", Color(80, 125, 230, v.espAlpha))
+            else
+                jeff.drawText(jeff.pos.x - jeff.tw / 2, jeff.pos.y - jeff.th / 2 + 13, jeff.fullDist, "ChatFont", Color(GetConVar("jeff_esp_r"):GetInt(), GetConVar("jeff_esp_g"):GetInt(), GetConVar("jeff_esp_b"):GetInt(), v.espAlpha))
+            end
+        else
+            if(jeff.pm.GetFriendStatus(v) == "friend") then
+                jeff.drawText(jeff.pos.x - jeff.tw / 2, jeff.pos.y - jeff.th / 2 + 7, jeff.fullDist, "ChatFont", Color(80, 125, 230, v.espAlpha))
+            else
+                jeff.drawText(jeff.pos.x - jeff.tw / 2, jeff.pos.y - jeff.th / 2 + 7, jeff.fullDist, "ChatFont", Color(GetConVar("jeff_esp_r"):GetInt(), GetConVar("jeff_esp_g"):GetInt(), GetConVar("jeff_esp_b"):GetInt(), v.espAlpha))
+            end
+        end
+    end
+
+    function jeff.Chams(v)
+        cam.Start3D()
+            if(GetConVar("jeff_chams_type"):GetInt() == 1) then
+                render.SuppressEngineLighting(true)
+            else
+                render.SuppressEngineLighting(false)
+            end
+
+            if(GetConVar("jeff_chams_ignorez"):GetInt() == 1) then
+                render.MaterialOverride(jeff.chamsMaterial)
+                render.SetColorModulation(GetConVar("jeff_chams_r_hidden"):GetInt() / 255, GetConVar("jeff_chams_g_hidden"):GetInt() / 255, GetConVar("jeff_chams_b_hidden"):GetInt() / 255)
+                
+                jeff.em.DrawModel(v)
+            end
+            
+            render.SetColorModulation(GetConVar("jeff_chams_r_visible"):GetInt() / 255, GetConVar("jeff_chams_g_visible"):GetInt() / 255, GetConVar("jeff_chams_b_visible"):GetInt() / 255)
+            render.MaterialOverride(jeff.chamsMaterial2)
+        
+            jeff.em.DrawModel(v)
+        cam.End3D()
+    end
+
+    function jeff.fixFullbright()
+        if(_G.GetConVar("jeff_brightnessadjustment"):GetInt() == 3) then
+            if(jeff.fullbright) then
+                render.SetLightingMode(0)
+                jeff.fullbright = false
+            end
+        end
+    end
+
+    function jeff.getFakePitch()
+        if(GetConVar("jeff_fake_pitch"):GetInt() == 1) then -- emotion aka safe down
+            jeff.fakeX = 89
+            jeff.realX = 89
+        elseif(GetConVar("jeff_fake_pitch"):GetInt() == 2) then -- safe up
+            jeff.fakeX = -89
+            jeff.realX = -89
+        elseif(GetConVar("jeff_fake_pitch"):GetInt() == 3) then -- safe random
+            jeff.safeRandom = math.random(-89, 89)
+            jeff.fakeX = jeff.safeRandom
+            jeff.realX = jeff.safeRandom
+        elseif(GetConVar("jeff_fake_pitch"):GetInt() == 4) then -- unsafe down
+            jeff.fakeX = 181.99
+            jeff.realX = 181.99
+        elseif(GetConVar("jeff_fake_pitch"):GetInt() == 5) then -- unsafe up
+            jeff.fakeX = -181.99
+            jeff.realX = -181.99
+        elseif(GetConVar("jeff_fake_pitch"):GetInt() == 6) then -- unsafe random
+            jeff.unsafeRandom = math.random(-181.99, 181.99)
+            jeff.fakeX = jeff.unsafeRandom
+            jeff.realX = jeff.unsafeRandom
+        end
+    end
+
+    function jeff.getPitch()
+        if(GetConVar("jeff_real_pitch"):GetInt() == 1) then -- emotion aka safe down
+            if(memesendpacket) then
+                jeff.realX = 89
+                jeff.realRenderX = 89
+            else
+                jeff.getFakePitch()
+            end
+        elseif(GetConVar("jeff_real_pitch"):GetInt() == 2) then -- safe up
+            if(memesendpacket) then
+                jeff.realX = -89
+                jeff.realRenderX = -89
+            else
+                jeff.getFakePitch()
+            end
+        elseif(GetConVar("jeff_real_pitch"):GetInt() == 3) then -- safe random
+            if(memesendpacket) then
+                jeff.mathRand = math.random(-89, 89)
+
+                jeff.realX = jeff.mathRand
+                jeff.realRenderX = jeff.mathRand
+            else
+                jeff.getFakePitch()
+            end
+        elseif(GetConVar("jeff_real_pitch"):GetInt() == 4) then -- unsafe down
+            if(memesendpacket) then
+                jeff.realX = 181.99
+                jeff.realRenderX = 181.99
+            else
+                jeff.getFakePitch()
+            end
+        elseif(GetConVar("jeff_real_pitch"):GetInt() == 5) then -- unsafe up
+            if(memesendpacket) then
+                jeff.realX = -181.99
+                jeff.realRenderX = -181.99
+            else
+                jeff.getFakePitch()
+            end
+        elseif(GetConVar("jeff_real_pitch"):GetInt() == 6) then -- unsafe random
+            if(memesendpacket) then
+                jeff.mathRand = math.random(-181.99, 181.99)
+
+                jeff.realX = jeff.mathRand
+                jeff.realRenderX = jeff.mathRand
+            else
+                jeff.getFakePitch()
+            end
+        elseif(GetConVar("jeff_real_pitch"):GetInt() == 7) then -- isotope (joke)
+            if(memesendpacket) then
+                if(jeff.isotope) then
+                    jeff.realX = -90.99
+                    jeff.realRenderX = -90.99
+                    jeff.isotope = false
+                else
+                    jeff.realX = 90.99
+                    jeff.realRenderX = 90.99
+                    jeff.isotope = true
+                end
+            else
+                jeff.getFakePitch()
+            end
+        end
+    end
+
+    function jeff.getFakeYaw()
+        if(GetConVar("jeff_fake_yaw"):GetInt() == 1) then -- static
+            jeff.realY = GetConVar("jeff_fake_yaw_add"):GetInt()
+            jeff.fakeY = GetConVar("jeff_fake_yaw_add"):GetInt()
+        elseif(GetConVar("jeff_fake_yaw"):GetInt() == 2) then -- zero
+            jeff.realY = 0
+            jeff.fakeY = 0
+        elseif(GetConVar("jeff_fake_yaw"):GetInt() == 3) then -- angle follow
+            jeff.realY = jeff.fa.y + GetConVar("jeff_fake_yaw_add"):GetInt()
+            jeff.fakeY = jeff.fa.y + GetConVar("jeff_fake_yaw_add"):GetInt()
+        elseif(GetConVar("jeff_fake_yaw"):GetInt() == 4) then -- jitter
+            jeff.realY = jeff.fa.y + GetConVar("jeff_fake_yaw_add"):GetInt() + math.random(0, GetConVar("jeff_fake_yaw_range"):GetInt() / 2)
+            jeff.fakeY = jeff.fa.y + GetConVar("jeff_fake_yaw_add"):GetInt() + math.random(0, GetConVar("jeff_fake_yaw_range"):GetInt() / 2)
+        elseif(GetConVar("jeff_fake_yaw"):GetInt() == 5) then -- spin
+            jeff.fakespin = jeff.fakespin + GetConVar("jeff_fake_yaw_speed"):GetInt() / 3.6
+
+            jeff.realY = GetConVar("jeff_fake_yaw_add"):GetInt() + jeff.fakespin
+            jeff.fakeY = GetConVar("jeff_fake_yaw_add"):GetInt() + jeff.fakespin
+        end
+    end
+
+    function jeff.getYaw()
+        if(GetConVar("jeff_real_yaw"):GetInt() == 1) then -- static
+            if(memesendpacket) then
+                jeff.realY = GetConVar("jeff_real_yaw_add"):GetInt()
+                jeff.realRenderY = GetConVar("jeff_real_yaw_add"):GetInt()
+            else
+                jeff.getFakeYaw()
+            end
+        elseif(GetConVar("jeff_real_yaw"):GetInt() == 2) then -- zero
+            if(memesendpacket) then
+                jeff.realY = 0
+                jeff.realRenderY = 0
+            else
+                jeff.getFakeYaw()
+            end
+        elseif(GetConVar("jeff_real_yaw"):GetInt() == 3) then -- angle follow
+            if(memesendpacket) then
+                jeff.realY = jeff.fa.y + GetConVar("jeff_real_yaw_add"):GetInt()
+                jeff.realRenderY = jeff.fa.y + GetConVar("jeff_real_yaw_add"):GetInt()
+            else
+                jeff.getFakeYaw()
+            end
+        elseif(GetConVar("jeff_real_yaw"):GetInt() == 4) then -- jitter
+            if(memesendpacket) then
+                jeff.mathRand2 = math.random(0, GetConVar("jeff_real_yaw_range"):GetInt() / 2)
+
+                jeff.realY = jeff.fa.y + GetConVar("jeff_real_yaw_add"):GetInt() + jeff.mathRand2
+                jeff.realRenderY = jeff.fa.y + GetConVar("jeff_real_yaw_add"):GetInt() + jeff.mathRand2
+            else
+                jeff.getFakeYaw()
+            end
+        elseif(GetConVar("jeff_real_yaw"):GetInt() == 5) then -- spin
+            jeff.realspin = jeff.realspin + GetConVar("jeff_real_yaw_speed"):GetInt() / 3.6
+
+            if(memesendpacket) then
+                jeff.realY = GetConVar("jeff_real_yaw_add"):GetInt() + jeff.realspin
+                jeff.realRenderY = GetConVar("jeff_real_yaw_add"):GetInt() + jeff.realspin
+            else
+                jeff.getFakeYaw()
+            end
+        end
+    end
+
+    function jeff.AntiAim(ucmd)
+        if((jeff.cm.CommandNumber(ucmd) == 0) && GetConVar("jeff_thirdperson"):GetInt() == 0 || jeff.cm.KeyDown(ucmd, 32) || jeff.antiaimIgnore || ucmd:KeyDown(IN_ATTACK)) then 
+            jeff.realRenderY = jeff.ply:EyeAngles().y
+            jeff.realRenderX = jeff.ply:EyeAngles().x
+        else
+            if(!jeff.freezeAngles) then
+                jeff.getPitch()
+                jeff.getYaw()
+            end
+
+            jeff.cm.SetViewAngles(ucmd, Angle(jeff.realX, jeff.realY, 0))
+        end
+    end
+
+    // Menu
+    function jeff.drawCheckbox(labelname, checkboxname, parent, x, y, name, convar, key, keyname)
+        if(convar != "") then
+            checkboxname = vgui.Create("DCheckBox", parent)
+            checkboxname:SetPos(x, y)
+            checkboxname:SetSize(10, 10)
+            checkboxname.OnChange = function()
+                if(GetConVar(convar):GetInt() == 0) then
+                    GetConVar(convar):SetInt(1)
+                else
+                    GetConVar(convar):SetInt(0)
+                end
+            end
+
+            checkboxname.Paint = function(self, w, h)
+                // Background
+                if(GetConVar(convar):GetInt() == 1) then
+                    for i = 0, 5 do
+                        jeff.drawRect(0, i * 2, w, 2, Color(GetConVar("jeff_currentmenu_R"):GetInt() + (i * 14), GetConVar("jeff_currentmenu_G"):GetInt() + (i * 14), GetConVar("jeff_currentmenu_B"):GetInt() + (i * 14)))
+                    end
+                else
+                    for i = 0, 5 do
+                        jeff.drawRect(0, i * 2, w, 2, Color(125 - (i * 10), 125 - (i * 10), 125 - (i * 10)))
+                    end
+                end
+
+                // Borders
+                jeff.drawRect(0, 0, w, 1, jeff.Black)
+                jeff.drawRect(0, 0, 1, h, jeff.Black)
+                jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+                jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+            end
+        end
+
+        labelname = vgui.Create("DLabel", parent)
+        labelname:SetPos(x + 30, y - 5)
+        labelname:SetText(name)
+        labelname:SetFont("menu_item")
+        labelname:SetSize(200, 19)
+
+        if(key != "") then
+            keyname = vgui.Create("DLabel", parent)
+            keyname:SetPos(x + 200 - (surface.GetTextSize(key) / 2), y - 5)
+            keyname:SetText(key)
+            keyname:SetColor(Color(60, 60, 60, 190))
+            keyname:SetFont("ChatFont")
+            keyname:SetSize(100, 19)
+        end
+    end
+
+    function jeff.drawComboBox(parent, comboname, x, y, table, convar)
+        comboname = vgui.Create("DComboBox", parent)
+        comboname:SetPos(x, y)
+        comboname:SetSize(185, 24)
+        comboname:SetSortItems(false)
+        for i = 1, #table do
+            comboname:AddChoice(table[i])
+        end
+
+        comboname.Paint = function(self, w, h)
+            // Setting the value
+            comboname:SetValue(table[GetConVar(convar):GetInt()])
+
+            // Background
+            for i = 0, 12 do
+                jeff.drawRect(0, i * 2, w, 2, Color(30 + i, 30 + i, 30 + i))
+            end
+
+            // Borders
+            jeff.drawRect(0, 0, w, 1, jeff.Black)
+            jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+            jeff.drawRect(0, 0, 1, h, jeff.Black)
+            jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+
+            if(comboname:IsHovered()) then
+                jeff.drawText(w - surface.GetTextSize("▼") - 7, 2, "▼", "downarrow_font", Color(70, 70, 70))
+            else
+                jeff.drawText(w - surface.GetTextSize("▼") - 7, 2, "▼", "downarrow_font", Color(40, 40, 40))
+            end
+        end
+
+        DMenuOption.Paint = function(self, w, h)
+            // Background
+            for i = 0, 12 do
+                jeff.drawRect(0, i * 2, w, 2, Color(30 + i, 30 + i, 30 + i))
+            end
+
+            // Borders
+            jeff.drawRect(0, 0, w, 1, jeff.Black)
+            jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+            jeff.drawRect(0, 0, 1, h, jeff.Black)
+            jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+        end
+
+        DMenuOption.PerformLayout = function(self)
+            self:SetTextColor(Color(120, 120, 120))
+            self:SetFont("menu_combofont")
+        end
+
+        comboname.DropButton.Paint = function() end
+
+        comboname.PerformLayout = function(self)
+            self:SetTextColor(Color(120, 120, 120))
+            self:SetFont("menu_combofont")
+        end
+
+        comboname.OnSelect = function(panel, index, value)
+            GetConVar(convar):SetInt(index)
+        end
+    end
+
+    function jeff.drawButton(parent, buttonname, x, y, text, func)
+        buttonname = vgui.Create("DButton", parent)
+        buttonname:SetSize(185, 24)
+        buttonname:SetPos(x, y)
+        buttonname:SetText(text)
+
+        buttonname.PerformLayout = function(self)
+            self:SetTextColor(Color(150, 150, 150))
+            self:SetFont("menu_buttonfont")
+        end
+
+        buttonname.Paint = function(self, w, h)
+            // Background
+            for i = 0, 12 do
+                jeff.drawRect(0, i * 2, w, 2, Color(40 - i, 40 - i, 40 - i))
+            end
+
+            // Borders
+            jeff.drawRect(0, 0, w, 1, jeff.Black)
+            jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+            jeff.drawRect(0, 0, 1, h, jeff.Black)
+            jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+        end
+
+        buttonname.DoClick = func
+    end
+
+    function jeff.drawSlider(parent, panelname, x, y, panelbackname, valueConVar, maths, times, moreMath, method, maxValue, labelname, name, labelname2, symbol)
+        panelname = vgui.Create("DPanel", parent)
+        panelname:SetSize(201, 6)
+        panelname:SetPos(x, y + 18)
+
+        panelname.Paint = function(slf, w, h)
+            for i = 0, 3 do
+                jeff.drawRect(0, i * 2, w - 2, 2, Color(125 - (i * 25), 125 - (i * 25), 125 - (i * 25)))
+            end
+        end
+
+        panelbackname = vgui.Create("DPanel", parent)
+        panelbackname:SetSize(200, 6)
+        panelbackname:SetPos(x, y + 18)
+
+        panelbackname.Paint = function(slf, w, h)
+            jeff.MouseX, jeff.MouseY = parent:LocalCursorPos() 
+            jeff.posX, jeff.posY = panelname:GetPos()
+
+            for i = 0, 3 do
+                jeff.drawRect(0, i * 2, (GetConVar(valueConVar):GetInt() / maths) * times, 2, Color(GetConVar("jeff_currentmenu_R"):GetInt() + (i * 25), GetConVar("jeff_currentmenu_G"):GetInt() + (i * 25), GetConVar("jeff_currentmenu_B"):GetInt() + (i * 25)))
+            end
+
+            if(jeff.MouseX > jeff.posX && jeff.MouseX < jeff.posX + 204 && jeff.MouseY > jeff.posY && jeff.MouseY < jeff.posY + 19) then
+                if(input.IsMouseDown(MOUSE_FIRST)) then
+                    if(method == "divide") then
+                        GetConVar(valueConVar):SetInt((jeff.MouseX - jeff.posX) / moreMath - 1) 
+                    elseif(method == "times") then
+                        GetConVar(valueConVar):SetInt((jeff.MouseX - jeff.posX) * moreMath + 1)
+                    end
+                end
+            end
+
+            // Borders
+            jeff.drawRect(0, 0, 1, h, jeff.Black)
+            jeff.drawRect(0, 0, w, 1, jeff.Black)
+            jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+            jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+        end
+
+        labelname2 = vgui.Create("DLabel", parent)
+        labelname2:SetText(name)
+        labelname2:SetFont("menu_item")
+        labelname2:SetSize(200, 19)
+        labelname2:SetPos(x, y)
+
+        labelname = vgui.Create("DLabel", parent)
+        labelname:SetText("0")
+        labelname:SetFont("menu_slider")
+        labelname:SetSize(200, 19)
+        labelname:SetPos(x + 2, y + 22)
+        labelname.Think = function() labelname:SetPos(x + (GetConVar(valueConVar):GetInt() / maths) * times - 8, y + 18) if(GetConVar(valueConVar):GetInt() / maths < 1) then labelname:SetText("0".. symbol) else labelname:SetText(math.Round(GetConVar(valueConVar):GetInt() / maths).. symbol) end end
+    end
+
+    function jeff.drawColorOption(x, y, labelname, colorpickername, panelname, parent, name, convarR, convarG, convarB, oX, oY)
+        labelname = vgui.Create("DLabel", parent)
+        labelname:SetText(name)
+        labelname:SetFont("menu_item")
+        labelname:SetSize(200, 19)
+        labelname:SetPos(x, y)
+
+        panelname = vgui.Create("DPanel", parent)
+        panelname:SetSize(150, 150)
+        panelname:SetPos(700, 600)
+        panelname.Paint = function(self, w, h)
+            // Checking for mouse position
+            jeff.MouseX, jeff.MouseY = parent:LocalCursorPos()
+            jeff.posX, jeff.posY = panelname:GetPos()
+
+            if !(jeff.MouseX > jeff.posX && jeff.MouseX < jeff.posX + 150 && jeff.MouseY > jeff.posY && jeff.MouseY < jeff.posY + 150) then 
+                if(input.IsMouseDown(MOUSE_LEFT)) then
+                    panelname:MoveTo(700, 600, 0, 0)
+                end
+            end
+
+            // Background
+            jeff.drawMaterialRect(9, 9, w - 18, h - 18, Color(255, 255, 255), jeff.backgroundMaterial)
+
+            // Borders
+            jeff.drawRect(0, 0, 1, h, jeff.Black)
+            jeff.drawRect(0, 0, w, 1, jeff.Black)
+            jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+            jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+
+            jeff.drawRect(1, 8, 7, h - 16, jeff.DarkGray)
+            jeff.drawRect(w - 8, 8, 7, h - 16, jeff.DarkGray)
+            jeff.drawRect(1, 1, w - 2, 7, jeff.DarkGray)
+            jeff.drawRect(1, h - 8, w - 2, 7, jeff.DarkGray)
+
+            jeff.drawRect(1, 1, 1, h - 2, jeff.Gray)
+            jeff.drawRect(7, 7, 1, h - 14, jeff.Gray)
+            jeff.drawRect(1, 1, w - 2, 1, jeff.Gray)
+            jeff.drawRect(7, 7, w - 14, 1, jeff.Gray)
+            jeff.drawRect(w - 2, 1, 1, h - 2, jeff.Gray)
+            jeff.drawRect(w - 8, 7, 1, h - 14, jeff.Gray)
+            jeff.drawRect(1, h - 2, w - 2, 1, jeff.Gray)
+            jeff.drawRect(7, h - 8, w - 14, 1, jeff.Gray)
+
+            jeff.drawRect(8, 8, 1, h - 16, jeff.Black)
+            jeff.drawRect(8, 8, w - 17, 1, jeff.Black)
+            jeff.drawRect(w - 9, 8, 1, h - 16, jeff.Black)
+            jeff.drawRect(8, h - 9, w - 17, 1, jeff.Black)
+        end
+
+        colorpickername = vgui.Create("DColorMixer", panelname)
+        colorpickername:SetPos(9, 9)
+        colorpickername:SetSize(131, 131)
+        colorpickername:SetPalette(false)
+        colorpickername:SetAlphaBar(false)
+        colorpickername:SetWangs(false)
+        colorpickername:SetConVarR(convarR)
+        colorpickername:SetConVarG(convarG)
+        colorpickername:SetConVarB(convarB)
+
+        buttonname = vgui.Create("DButton", parent)
+        buttonname:SetPos(x + 160, y + 5)
+        buttonname:SetSize(30, 10)
+        buttonname:SetText("")
+        buttonname.Paint = function(self, w, h)
+            // Background
+            for i = 0, 5 do
+                jeff.drawRect(0, i * 2, w, 2, Color(GetConVar(convarR):GetInt() + (i * 20), GetConVar(convarG):GetInt() + (i * 20), GetConVar(convarB):GetInt() + (i * 20)))
+            end
+
+            // Borders
+            jeff.drawRect(0, 0, 1, h, jeff.Black)
+            jeff.drawRect(0, 0, w, 1, jeff.Black)
+            jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+            jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+        end
+
+        buttonname.DoClick = function()
+            panelname:MoveTo(oX, oY, 0, 0)
+        end
+    end
+
+    function jeff.drawSmallColorPicker(panelname, colorpickername, convarR, convarG, convarB, buttonname, oX, oY, x, y, parent)
+        panelname = vgui.Create("DPanel", parent)
+        panelname:SetSize(150, 150)
+        panelname:SetPos(700, 600)
+        panelname.Paint = function(self, w, h)
+            // Checking for mouse position
+            jeff.MouseX, jeff.MouseY = parent:LocalCursorPos()
+            jeff.posX, jeff.posY = panelname:GetPos()
+
+            if !(jeff.MouseX > jeff.posX && jeff.MouseX < jeff.posX + 150 && jeff.MouseY > jeff.posY && jeff.MouseY < jeff.posY + 150) then 
+                if(input.IsMouseDown(MOUSE_LEFT)) then
+                    panelname:MoveTo(700, 600, 0, 0)
+                end
+            end
+
+            // Background
+            jeff.drawMaterialRect(9, 9, w - 18, h - 18, Color(255, 255, 255), jeff.backgroundMaterial)
+
+            // Borders
+            jeff.drawRect(0, 0, 1, h, jeff.Black)
+            jeff.drawRect(0, 0, w, 1, jeff.Black)
+            jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+            jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+
+            jeff.drawRect(1, 8, 7, h - 16, jeff.DarkGray)
+            jeff.drawRect(w - 8, 8, 7, h - 16, jeff.DarkGray)
+            jeff.drawRect(1, 1, w - 2, 7, jeff.DarkGray)
+            jeff.drawRect(1, h - 8, w - 2, 7, jeff.DarkGray)
+
+            jeff.drawRect(1, 1, 1, h - 2, jeff.Gray)
+            jeff.drawRect(7, 7, 1, h - 14, jeff.Gray)
+            jeff.drawRect(1, 1, w - 2, 1, jeff.Gray)
+            jeff.drawRect(7, 7, w - 14, 1, jeff.Gray)
+            jeff.drawRect(w - 2, 1, 1, h - 2, jeff.Gray)
+            jeff.drawRect(w - 8, 7, 1, h - 14, jeff.Gray)
+            jeff.drawRect(1, h - 2, w - 2, 1, jeff.Gray)
+            jeff.drawRect(7, h - 8, w - 14, 1, jeff.Gray)
+
+            jeff.drawRect(8, 8, 1, h - 16, jeff.Black)
+            jeff.drawRect(8, 8, w - 17, 1, jeff.Black)
+            jeff.drawRect(w - 9, 8, 1, h - 16, jeff.Black)
+            jeff.drawRect(8, h - 9, w - 17, 1, jeff.Black)
+        end
+        
+        colorpickername = vgui.Create("DColorMixer", panelname)
+        colorpickername:SetPos(9, 9)
+        colorpickername:SetSize(131, 131)
+        colorpickername:SetPalette(false)
+        colorpickername:SetAlphaBar(false)
+        colorpickername:SetWangs(false)
+        colorpickername:SetConVarR(convarR)
+        colorpickername:SetConVarG(convarG)
+        colorpickername:SetConVarB(convarB)
+
+        buttonname = vgui.Create("DButton", parent)
+        buttonname:SetPos(x + 160, y + 5)
+        buttonname:SetSize(30, 10)
+        buttonname:SetText("")
+        buttonname.Paint = function(self, w, h)
+            // Background
+            for i = 0, 5 do
+                jeff.drawRect(0, i * 2, w, 2, Color(GetConVar(convarR):GetInt() + (i * 20), GetConVar(convarG):GetInt() + (i * 20), GetConVar(convarB):GetInt() + (i * 20)))
+            end
+
+            // Borders
+            jeff.drawRect(0, 0, 1, h, jeff.Black)
+            jeff.drawRect(0, 0, w, 1, jeff.Black)
+            jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+            jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+        end
+
+        buttonname.DoClick = function()
+            panelname:MoveTo(oX, oY, 0, 0)
+        end
+    end
+    
+    function jeff.DrawInfoBackground(self, w, h)
+        // Background
+        jeff.drawMaterialRect(9, 12, w - 18, h - 21, Color(255, 255, 255), jeff.backgroundMaterial)
+
+        // Borders
+        jeff.drawRect(0, 0, 1, h, jeff.Black)
+        jeff.drawRect(0, 0, w, 1, jeff.Black)
+        jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+        jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+
+        jeff.drawRect(1, 8, 7, h - 16, jeff.DarkGray)
+        jeff.drawRect(w - 8, 8, 7, h - 16, jeff.DarkGray)
+        jeff.drawRect(1, 1, w - 2, 7, jeff.DarkGray)
+        jeff.drawRect(1, h - 8, w - 2, 7, jeff.DarkGray)
+
+        jeff.drawRect(1, 1, 1, h - 2, jeff.Gray)
+        jeff.drawRect(7, 7, 1, h - 14, jeff.Gray)
+        jeff.drawRect(1, 1, w - 2, 1, jeff.Gray)
+        jeff.drawRect(7, 7, w - 14, 1, jeff.Gray)
+        jeff.drawRect(w - 2, 1, 1, h - 2, jeff.Gray)
+        jeff.drawRect(w - 8, 7, 1, h - 14, jeff.Gray)
+        jeff.drawRect(1, h - 2, w - 2, 1, jeff.Gray)
+        jeff.drawRect(7, h - 8, w - 14, 1, jeff.Gray)
+
+        jeff.drawRect(8, 8, 1, h - 16, jeff.Black)
+        jeff.drawRect(8, 8, w - 17, 1, jeff.Black)
+        jeff.drawRect(w - 9, 8, 1, h - 16, jeff.Black)
+        jeff.drawRect(8, h - 9, w - 17, 1, jeff.Black)
+
+        jeff.drawMaterialRect(9, 9, 382, 2, jeff.White, jeff.gradientMaterial)
+        jeff.drawRect(8, 11, w - 17, 1, jeff.Black)
+
+        if(jeff.infoCloseTimer > 0) then
+            jeff.drawText(w - surface.GetTextSize(jeff.infoCloseTimer) - 10, 13, jeff.infoCloseTimer, "menu_item", jeff.White)
+        else
+            jeff.drawText(w - surface.GetTextSize("DONE") - 10, 13, "DONE", "menu_item", jeff.White)
+        end
+    end
+
+    function jeff.openInfoMenu()
+        jeff.infoOpen = true
+        timer.Start("closeInfo")
+
+        jeff.infoMenu = vgui.Create("DFrame")
+        jeff.infoMenu:SetSize(400, 400)
+        jeff.infoMenu:SetPos(ScrW() / 2 - 200, ScrH() / 2 - 200)
+        jeff.infoMenu:MakePopup()
+        jeff.infoMenu:SetDraggable(false)
+        jeff.infoMenu:ShowCloseButton(false)
+        jeff.infoMenu:SetTitle("")
+            
+        if(GetConVar("jeff_menufade"):GetInt() == 1) then
+            jeff.infoMenu:SetAlpha(0)
+        else
+            jeff.infoMenu:SetAlpha(255)
+        end
+
+        jeff.infoMenu.Paint = function(self, w, h)
+            if(jeff.infoMenu:GetAlpha() < 255 && !jeff.infoClosing) then jeff.infoAlpha = jeff.infoAlpha + 5 end
+            if(jeff.infoClosing && GetConVar("jeff_menufade"):GetInt() == 1) then jeff.infoAlpha = jeff.infoAlpha - 5 if(jeff.infoAlpha >= 0) then jeff.infoMenu:Close() end end
+            if(GetConVar("jeff_menufade"):GetInt() == 1) then jeff.infoMenu:SetAlpha(jeff.infoAlpha) end
+            if(GetConVar("jeff_antiscreenshot"):GetInt() == 1) then jeff.infoMenu:SetRenderInScreenshots(false) else jeff.infoMenu:SetRenderInScreenshots(true) end
+            jeff.DrawInfoBackground(self, w, h)
+        end
+
+        jeff.drawButton(jeff.infoMenu, jeff.CloseButton, 107.5, 340, "Wait for the timer.", function() if(jeff.infoCloseTimer <= 0) then jeff.infoClosing = true jeff.infoOpen = false file.Write("encore/loaded.txt", "true") else jeff.printChat("Wait till the timer is done!", Color(255, 255, 255)) end end)
+    
+        jeff.infoRich = vgui.Create("RichText", jeff.infoMenu)
+        jeff.infoRich:SetPos(12, 13)
+        jeff.infoRich:SetSize(300, 200)
+        jeff.infoRich:SetVerticalScrollbarEnabled(false)
+        jeff.infoRich.PerformLayout = function(self)
+            self:SetFGColor(jeff.White)
+            self:SetFontInternal("menu_item")
+        end
+
+        jeff.infoRich:SetText("You're currently loading encore by kefir.\n\nIf you really want to cheat go ahead.\n\nYou're cheating on your own risk and you might/will get banned from the server. So please do me a favor and don't play on your favorite server.\n\nPlease don't edit the files of this cheat.\n\nAlso if you have any problems, message me at:\nsteamcommunity.com/id/atomicburen!")
+    end
+
+    function jeff.DrawBackground(self, w, h)
+        // Background
+        jeff.drawMaterialRect(105, 12, w - 114, h - 21, Color(255, 255, 255), jeff.backgroundMaterial)
+        
+        // Side Tab
+        if(jeff.currentTab == "ragebot") then
+            jeff.drawRect(9, 11, 96, 24, jeff.TabBackgroundColor)
+            jeff.drawRect(9, 124, 96, h - 132, jeff.TabBackgroundColor)
+
+            jeff.drawRect(104, 11, 1, 24, jeff.Gray)
+            jeff.drawRect(103, 11, 1, 24, jeff.Black)
+
+            jeff.drawRect(104, 124, 1, h - 132, jeff.Gray)
+            jeff.drawRect(103, 124, 1, h - 132, jeff.Black)
+        elseif(jeff.currentTab == "legitbot") then
+            jeff.drawRect(9, 11, 96, 116, jeff.TabBackgroundColor)
+            jeff.drawRect(9, 213, 96, h - 222, jeff.TabBackgroundColor)
+            
+            jeff.drawRect(104, 11, 1, 114, jeff.Gray)
+            jeff.drawRect(103, 11, 1, 114, jeff.Black)
+
+            jeff.drawRect(104, 213, 1, h - 221, jeff.Gray)
+            jeff.drawRect(103, 213, 1, h - 221, jeff.Black)
+        elseif(jeff.currentTab == "visuals") then
+            jeff.drawRect(9, 11, 96, 204, jeff.TabBackgroundColor)
+            jeff.drawRect(9, 302, 96, h - 311, jeff.TabBackgroundColor)
+
+            jeff.drawRect(104, 11, 1, 203, jeff.Gray)
+            jeff.drawRect(103, 11, 1, 203, jeff.Black)
+
+            jeff.drawRect(104, 301, 1, h - 310, jeff.Gray)
+            jeff.drawRect(103, 301, 1, h - 310, jeff.Black)
+        elseif(jeff.currentTab == "miscellaneous") then
+            jeff.drawRect(9, 11, 96, 292, jeff.TabBackgroundColor)
+            jeff.drawRect(9, 391, 96, h - 400, jeff.TabBackgroundColor)
+
+            jeff.drawRect(104, 11, 1, 291, jeff.Gray)
+            jeff.drawRect(103, 11, 1, 291, jeff.Black)
+
+            jeff.drawRect(104, 390, 1, h - 399, jeff.Gray)
+            jeff.drawRect(103, 390, 1, h - 399, jeff.Black)
+        elseif(jeff.currentTab == "colors") then
+            jeff.drawRect(9, 11, 96, 380, jeff.TabBackgroundColor)
+            jeff.drawRect(9, 480, 96, h - 488, jeff.TabBackgroundColor)
+            
+            jeff.drawRect(104, 11, 1, 380, jeff.Gray)
+            jeff.drawRect(103, 11, 1, 380, jeff.Black)
+
+            jeff.drawRect(104, 479, 1, h - 488, jeff.Gray)
+            jeff.drawRect(103, 479, 1, h - 488, jeff.Black)
+        elseif(jeff.currentTab == "whitelist") then
+            jeff.drawRect(9, 11, 96, 468, jeff.TabBackgroundColor)
+            jeff.drawRect(9, 569, 96, h - 576, jeff.TabBackgroundColor)
+            
+            jeff.drawRect(104, 11, 1, 470, jeff.Gray)
+            jeff.drawRect(103, 11, 1, 470, jeff.Black)
+
+            jeff.drawRect(104, 568, 1, h - 577, jeff.Gray)
+            jeff.drawRect(103, 568, 1, h - 577, jeff.Black)
+        end
+
+        // Borders
+        jeff.drawRect(0, 0, 1, h, jeff.Black)
+        jeff.drawRect(0, 0, w, 1, jeff.Black)
+        jeff.drawRect(0, h - 1, w, 1, jeff.Black)
+        jeff.drawRect(w - 1, 0, 1, h, jeff.Black)
+
+        jeff.drawRect(1, 8, 7, h - 16, jeff.DarkGray)
+        jeff.drawRect(w - 8, 8, 7, h - 16, jeff.DarkGray)
+        jeff.drawRect(1, 1, w - 2, 7, jeff.DarkGray)
+        jeff.drawRect(1, h - 8, w - 2, 7, jeff.DarkGray)
+
+        jeff.drawRect(1, 1, 1, h - 2, jeff.Gray)
+        jeff.drawRect(7, 7, 1, h - 14, jeff.Gray)
+        jeff.drawRect(1, 1, w - 2, 1, jeff.Gray)
+        jeff.drawRect(7, 7, w - 14, 1, jeff.Gray)
+        jeff.drawRect(w - 2, 1, 1, h - 2, jeff.Gray)
+        jeff.drawRect(w - 8, 7, 1, h - 14, jeff.Gray)
+        jeff.drawRect(1, h - 2, w - 2, 1, jeff.Gray)
+        jeff.drawRect(7, h - 8, w - 14, 1, jeff.Gray)
+
+        jeff.drawRect(8, 8, 1, h - 16, jeff.Black)
+        jeff.drawRect(8, 8, w - 17, 1, jeff.Black)
+        jeff.drawRect(w - 9, 8, 1, h - 16, jeff.Black)
+        jeff.drawRect(8, h - 9, w - 17, 1, jeff.Black)
+
+        jeff.drawMaterialRect(9, 9, 682, 2, jeff.White, jeff.gradientMaterial)
+        jeff.drawRect(8, 11, w - 17, 1, jeff.Black)
+        
+        // Tabs
+        if(jeff.currentTab == "ragebot") then
+            // Background
+            jeff.drawMaterialRect(9, 35, 96, 88, Color(255, 255, 255), jeff.tabBackgroundMaterial)
+
+            // Bottom / Top Line
+            jeff.drawRect(9, 35, 96, 1, jeff.Gray)
+            jeff.drawRect(9, 123, 96, 1, jeff.Gray)
+
+            jeff.drawRect(9, 34, 95, 1, jeff.Black)
+            jeff.drawRect(9, 124, 95, 1, jeff.Black)
+
+            // Icon
+            jeff.drawText(25, 51, "A", "icons2", jeff.White)
+        else
+            jeff.drawText(25, 51, "A", "icons2", jeff.Gray)
+        end
+
+        if(jeff.currentTab == "legitbot") then
+            // Background
+            jeff.drawMaterialRect(9, 124, 96, 88, Color(255, 255, 255), jeff.tabBackgroundMaterial)
+
+            // Bottom / Top Line
+            jeff.drawRect(9, 212, 96, 1, jeff.Gray)
+            jeff.drawRect(9, 125, 96, 1, jeff.Gray)
+
+            jeff.drawRect(9, 213, 95, 1, jeff.Black)
+            jeff.drawRect(9, 124, 95, 1, jeff.Black)
+
+            // Icon
+            jeff.drawText(25, 138, "I", "icons2", jeff.White)
+        else
+            jeff.drawText(25, 138, "I", "icons2", jeff.Gray)
+        end
+
+        if(jeff.currentTab == "visuals") then
+            // Background
+            jeff.drawMaterialRect(9, 213, 96, 88, Color(255, 255, 255), jeff.tabBackgroundMaterial)
+
+            // Bottom / Top Line
+            jeff.drawRect(9, 213, 96, 1, jeff.Gray)
+            jeff.drawRect(9, 301, 95, 1, jeff.Gray)
+
+            jeff.drawRect(9, 212, 95, 1, jeff.Black)
+            jeff.drawRect(9, 302, 95, 1, jeff.Black)
+
+            // Icon
+            jeff.drawText(25, 228, "D", "icons2", jeff.White)
+        else
+            jeff.drawText(25, 228, "D", "icons2", jeff.Gray)
+        end
+
+        if(jeff.currentTab == "miscellaneous") then
+            // Background
+            jeff.drawMaterialRect(9, 302, 96, 88, Color(255, 255, 255), jeff.tabBackgroundMaterial)
+
+            // Bottom / Top Line
+            jeff.drawRect(9, 302, 96, 1, jeff.Gray)
+            jeff.drawRect(9, 390, 95, 1, jeff.Gray)
+
+            jeff.drawRect(9, 301, 95, 1, jeff.Black)
+            jeff.drawRect(9, 391, 95, 1, jeff.Black)
+
+            // Icon
+            jeff.drawText(25, 318, "G", "icons2", jeff.White)
+        else
+            jeff.drawText(25, 318, "G", "icons2", jeff.Gray)
+        end
+
+        if(jeff.currentTab == "colors") then
+            // Background
+            jeff.drawMaterialRect(9, 391, 96, 88, Color(255, 255, 255), jeff.tabBackgroundMaterial)
+
+            // Bottom / Top Line
+            jeff.drawRect(9, 391, 96, 1, jeff.Gray)
+            jeff.drawRect(9, 479, 95, 1, jeff.Gray)
+
+            jeff.drawRect(9, 390, 95, 1, jeff.Black)
+            jeff.drawRect(9, 480, 95, 1, jeff.Black)
+
+            // Icon
+            jeff.drawText(25, 405, "H", "icons2", jeff.White)
+        else
+            jeff.drawText(25, 405, "H", "icons2", jeff.Gray)
+        end
+
+        if(jeff.currentTab == "whitelist") then
+            // Background
+            jeff.drawMaterialRect(9, 480, 96, 88, Color(255, 255, 255), jeff.tabBackgroundMaterial)
+
+            // Bottom / Top Line
+            jeff.drawRect(9, 480, 96, 1, jeff.Gray)
+            jeff.drawRect(9, 568, 95, 1, jeff.Gray)
+
+            jeff.drawRect(9, 479, 95, 1, jeff.Black)
+            jeff.drawRect(9, 569, 95, 1, jeff.Black)
+
+            // Icon
+            jeff.drawText(25, 495, "f", "icons", jeff.White)
+        else
+            jeff.drawText(25, 495, "f", "icons", jeff.Gray)
+        end
+        
+        jeff.drawRect(104, 124, 1, 2, jeff.Gray)
+    end
+
+
+    function jeff.AddTabs()
+        jeff.ragebotTab = vgui.Create("DPanel", jeff.mainMenu)
+        jeff.ragebotTab:SetSize(585, 580)
+        jeff.ragebotTab:SetPos(700, 600)
+        jeff.ragebotTab.Paint = function(self, w, h)
+            // Aimbot
+                // Background
+                jeff.drawRect(32, 22, 246, 548, jeff.BackgroundColor)
+
+                // Left Line
+                jeff.drawRect(30, 20, 1, 550, jeff.Gray)
+                jeff.drawRect(29, 20, 1, 550, jeff.Black)
+
+                // Right Line
+                jeff.drawRect(277, 20, 1, 550, jeff.Gray)
+                jeff.drawRect(278, 20, 1, 550, jeff.Black)
+
+                // Top Line 1
+                jeff.drawRect(30, 20, 20, 1, jeff.Gray)
+                jeff.drawRect(29, 19, 21, 1, jeff.Black)
+
+                // Top Line 2
+                jeff.drawRect(97, 20, 180, 1, jeff.Gray)
+                jeff.drawRect(97, 19, 182, 1, jeff.Black)
+
+                // Bottom Line
+                jeff.drawRect(31, 569, 246, 1, jeff.Gray)
+                jeff.drawRect(29, 570, 250, 1, jeff.Black)
+
+                // Top Text
+                jeff.drawText(53, 14, "Aimbot", "menu_title", jeff.WhiteGray)
+
+            // Accuracy
+                // Background
+                jeff.drawRect(307, 22, 246, 200, jeff.BackgroundColor)
+
+                // Left Line
+                jeff.drawRect(305, 20, 1, 200, jeff.Gray)
+                jeff.drawRect(304, 20, 1, 200, jeff.Black)
+
+                // Right Line
+                jeff.drawRect(554, 20, 1, 200, jeff.Gray)
+                jeff.drawRect(555, 20, 1, 201, jeff.Black)
+
+                // Top Line 1
+                jeff.drawRect(305, 20, 20, 1, jeff.Gray)
+                jeff.drawRect(304, 19, 22, 1, jeff.Black)
+
+                // Top Line 2
+                jeff.drawRect(383, 20, 171, 1, jeff.Gray)
+                jeff.drawRect(383, 19, 173, 1, jeff.Black)
+
+                // Bottom Line
+                jeff.drawRect(305, 220, 250, 1, jeff.Gray)
+                jeff.drawRect(304, 221, 252, 1, jeff.Black)
+
+                // Top Text
+                jeff.drawText(330, 14, "Accuracy", "menu_title", jeff.WhiteGray)
+
+            // Anti-Aim
+                // Background
+                jeff.drawRect(307, 252, 246, 318, jeff.BackgroundColor)
+
+                // Left Line
+                jeff.drawRect(305, 250, 1, 320, jeff.Gray)
+                jeff.drawRect(304, 250, 1, 320, jeff.Black)
+
+                // Right Line
+                jeff.drawRect(554, 250, 1, 320, jeff.Gray)
+                jeff.drawRect(555, 250, 1, 320, jeff.Black)
+
+                // Top Line 1
+                jeff.drawRect(305, 250, 20, 1, jeff.Gray)
+                jeff.drawRect(304, 249, 22, 1, jeff.Black)
+
+                // Top Line 2
+                jeff.drawRect(379, 250, 175, 1, jeff.Gray)
+                jeff.drawRect(379, 249, 177, 1, jeff.Black)
+
+                // Bottom Line
+                jeff.drawRect(305, 568, 250, 1, jeff.Gray)
+                jeff.drawRect(304, 569, 252, 1, jeff.Black)
+
+                // Top Text
+                jeff.drawText(330, 242, "Anti-Aim", "menu_title", jeff.WhiteGray)
+        end
+
+        // Aimbot
+        jeff.drawCheckbox(jeff.aimbotLabel, jeff.aimbotCheckbox, jeff.ragebotTab, 45, 40, "Aimbot", "jeff_aimbot", "", jeff.aimbotKey)
+        jeff.drawSlider(jeff.ragebotTab, jeff.aimbotfovSlider, 45, 59, jeff.aimbotfovSliderBack, "jeff_aimbotfov", 2, 1.104, 1.773399013, "times", 180, jeff.aimbotfovLabel, "Aimbot FOV", jeff.aimbotfovLabel2, "°")
+        jeff.drawCheckbox(jeff.silentLabel, jeff.silentCheckbox, jeff.ragebotTab, 45, 97, "Silent", "jeff_silent", "", jeff.silentKey)
+        jeff.drawCheckbox(jeff.autowallLabel, jeff.autowallCheckbox, jeff.ragebotTab, 45, 116, "Autowall (broken atm)", "jeff_autowall", "", jeff.autowallKey)
+        jeff.drawComboBox(jeff.ragebotTab, jeff.hitboxBox, 65, 135, jeff.hitboxes, "jeff_hitbox")
+        jeff.drawCheckbox(jeff.autofireLabel, jeff.autofireCheckbox, jeff.ragebotTab, 45, 169, "Auto Fire", "jeff_autofire", "", jeff.autofireKey)
+        jeff.drawCheckbox(jeff.bullettimeLabel, jeff.bullettimeCheckbox, jeff.ragebotTab, 45, 188, "Bullet Time", "jeff_bullettime", "", jeff.bullettimeKey)
+        jeff.drawCheckbox(jeff.velocitypredictionLabel, jeff.velocitypredictionCheckbox, jeff.ragebotTab, 45, 207, "Velocity Prediction", "jeff_velocityprediction", "", jeff.velocitypredictionKey)
+        jeff.drawCheckbox(jeff.aimkeyLabel, jeff.aimkeyCheckbox, jeff.ragebotTab, 45, 226, "Aim Key", "jeff_aimkey", "[M4]", jeff.aimkeyKey)
+        jeff.drawCheckbox(jeff.ignorefriendsLabel, jeff.ignorefriendsCheckbox, jeff.ragebotTab, 45, 245, "Ignore Friends", "jeff_ignorefriends", "", jeff.ignorefriendsKey)
+        jeff.drawCheckbox(jeff.ignoreadminsLabel, jeff.ignoreadminsCheckbox, jeff.ragebotTab, 45, 264, "Ignore Admins", "jeff_ignoreadmins", "", jeff.ignoreadminsKey)
+        jeff.drawCheckbox(jeff.ignoreteamLabel, jeff.ignoreteamCheckbox, jeff.ragebotTab, 45, 283, "Ignore Team", "jeff_ignoreteam", "", jeff.ignoreteamKey)
+        jeff.drawCheckbox(jeff.ignorespawningLabel, jeff.ignorespawningCheckbox, jeff.ragebotTab, 45, 302, "Ignore Spawning", "jeff_ignorespawning", "", jeff.ignorespawningKey)
+
+        // Accuracy
+        jeff.drawCheckbox(jeff.norecoilLabel, jeff.norecoilCheckbox, jeff.ragebotTab, 320, 40, "No Recoil", "jeff_norecoil", "", jeff.norecoilKey)
+        jeff.drawCheckbox(jeff.predictspreadLabel, jeff.predictspreadCheckbox, jeff.ragebotTab, 320, 59, "Predict Spread", "jeff_predictspread", "", jeff.predictspreadKey)
+
+        // Anti-Aim
+        jeff.AATab = vgui.Create("DPanel", jeff.ragebotTab)
+        jeff.AATab:SetPos(307, 252)
+        jeff.AATab:SetSize(246, 318)
+        jeff.AATab.Paint = function() end
+
+        jeff.drawCheckbox(jeff.slowwalkLabel, jeff.slowwalkCheckbox, jeff.AATab, 10, 14 + jeff.addPos, "Slow Walk", "jeff_slowwalk", "[V]", jeff.slowwalkKey)
+        jeff.drawCheckbox(jeff.antiaimonLabel, jeff.antiaimonCheckbox, jeff.AATab, 10, 33 + jeff.addPos, "Anti-Aim Enabled", "jeff_antiaimon", "", jeff.antiaimKey)
+        jeff.drawComboBox(jeff.AATab, jeff.realPitchBox, 10, 54 + jeff.addPos, jeff.pitches, "jeff_real_pitch")
+        jeff.drawComboBox(jeff.AATab, jeff.realYawBox, 10, 84 + jeff.addPos, jeff.yaws, "jeff_real_yaw")
+        jeff.drawSlider(jeff.AATab, jeff.realyawaddSlider, 10, 114 + jeff.addPos, jeff.realyawaddSliderBack, "jeff_real_yaw_add", 1, 0.552, 1.773, "times", 360, jeff.realyawaddLabel, "Real Yaw Add", jeff.realyawaddLabel2, "°")
+        jeff.drawSlider(jeff.AATab, jeff.realyawrangeSlider, 10, 150 + jeff.addPos, jeff.realyawrangeSliderBack, "jeff_real_yaw_range", 2, 1.104, 1.773399013, "times", 180, jeff.realyawrangeLabel, "Real Yaw Jitter Range", jeff.realyawrangeLabel2, "°")
+        jeff.drawSlider(jeff.AATab, jeff.realyawspeedlider, 10, 186 + jeff.addPos, jeff.realyawspeedSliderBack, "jeff_real_yaw_speed", 2, 1.104, 1.773399013, "times", 180, jeff.realyawspeedLabel, "Real Yaw Spin Speed", jeff.realyawspeedLabel2, "°")
+        jeff.drawComboBox(jeff.AATab, jeff.fakePitchBox, 10, 226 + jeff.addPos, jeff.fakePitches, "jeff_fake_pitch")
+        jeff.drawComboBox(jeff.AATab, jeff.fakeYawBox, 10, 256 + jeff.addPos, jeff.fakeYaws, "jeff_fake_yaw")
+        jeff.drawSlider(jeff.AATab, jeff.fakeyawaddSlider, 10, 286 + jeff.addPos, jeff.fakeyawaddSliderBack, "jeff_fake_yaw_add", 1, 0.552, 1.773, "times", 360, jeff.fakeyawaddLabel, "Fake Yaw Add", jeff.fakeyawaddLabel2, "°")
+        jeff.drawSlider(jeff.AATab, jeff.fakeyawrangeSlider, 10, 332 + jeff.addPos, jeff.fakeyawrangeSliderBack, "jeff_fake_yaw_range", 2, 1.104, 1.773399013, "times", 180, jeff.fakeyawrangeLabel, "Fake Yaw Jitter Range", jeff.fakeyawrangeLabel2, "°")
+        jeff.drawSlider(jeff.AATab, jeff.fakeyawspeedlider, 10, 378 + jeff.addPos, jeff.fakeyawspeedSliderBack, "jeff_fake_yaw_speed", 2, 1.104, 1.773399013, "times", 180, jeff.fakeyawspeedLabel, "Fake Yaw Spin Speed", jeff.fakeyawspeedLabel2, "°")
+
+        jeff.legitbotTab = vgui.Create("DPanel", jeff.mainMenu)
+        jeff.legitbotTab:SetSize(585, 580)
+        jeff.legitbotTab:SetPos(700, 600)
+        jeff.legitbotTab.Paint = function(self, w, h) end
+
+        jeff.visualsTab = vgui.Create("DPanel", jeff.mainMenu)
+        jeff.visualsTab:SetSize(585, 580)
+        jeff.visualsTab:SetPos(700, 600)
+        jeff.visualsTab.Paint = function(self, w, h) 
+            // ESP
+                // Background
+                jeff.drawRect(32, 22, 246, 380, jeff.BackgroundColor)
+
+                // Left Line
+                jeff.drawRect(30, 20, 1, 380, jeff.Gray)
+                jeff.drawRect(29, 20, 1, 380, jeff.Black)
+
+                // Right Line
+                jeff.drawRect(277, 20, 1, 380, jeff.Gray)
+                jeff.drawRect(278, 20, 1, 380, jeff.Black)
+
+                // Top Line 1
+                jeff.drawRect(30, 20, 20, 1, jeff.Gray)
+                jeff.drawRect(29, 19, 21, 1, jeff.Black)
+
+                // Top Line 2
+                jeff.drawRect(83, 20, 194, 1, jeff.Gray)
+                jeff.drawRect(83, 19, 196, 1, jeff.Black)
+
+                // Bottom Line
+                jeff.drawRect(31, 399, 246, 1, jeff.Gray)
+                jeff.drawRect(29, 400, 250, 1, jeff.Black)
+
+                // Top Text
+                jeff.drawText(55, 14, "ESP", "menu_title", jeff.WhiteGray)
+
+            // Models
+                // Background
+                jeff.drawRect(32, 422, 246, 150, jeff.BackgroundColor)
+
+                // Left Line
+                jeff.drawRect(30, 420, 1, 151, jeff.Gray)
+                jeff.drawRect(29, 420, 1, 151, jeff.Black)
+
+                // Right Line
+                jeff.drawRect(277, 420, 1, 151, jeff.Gray)
+                jeff.drawRect(278, 420, 1, 151, jeff.Black)
+
+                // Top Line 1
+                jeff.drawRect(30, 420, 20, 1, jeff.Gray)
+                jeff.drawRect(29, 419, 21, 1, jeff.Black)
+
+                // Top Line 2
+                jeff.drawRect(96, 420, 182, 1, jeff.Gray)
+                jeff.drawRect(96, 419, 183, 1, jeff.Black)
+
+                // Bottom Line
+                jeff.drawRect(31, 569, 246, 1, jeff.Gray)
+                jeff.drawRect(29, 570, 250, 1, jeff.Black)
+
+                // Top Text
+                jeff.drawText(53, 414, "Models", "menu_title", jeff.WhiteGray)
+
+            // Other ESP
+                // Background 
+                jeff.drawRect(307, 22, 246, 550, jeff.BackgroundColor)
+
+                // Left Line
+                jeff.drawRect(305, 20, 1, 550, jeff.Gray)
+                jeff.drawRect(304, 20, 1, 550, jeff.Black)
+
+                // Right Line
+                jeff.drawRect(554, 20, 1, 550, jeff.Gray)
+                jeff.drawRect(555, 20, 1, 551, jeff.Black)
+
+                // Top Line 1
+                jeff.drawRect(305, 20, 20, 1, jeff.Gray)
+                jeff.drawRect(304, 19, 22, 1, jeff.Black)
+
+                // Top Line 2
+                jeff.drawRect(390, 20, 164, 1, jeff.Gray)
+                jeff.drawRect(390, 19, 166, 1, jeff.Black)
+
+                // Bottom Line
+                jeff.drawRect(305, 568, 250, 1, jeff.Gray)
+                jeff.drawRect(304, 569, 252, 1, jeff.Black)
+
+                // Top Text
+                jeff.drawText(330, 14, "Other ESP", "menu_title", jeff.WhiteGray)
+        end
+
+        // Other
+        jeff.drawCheckbox(jeff.packetindicatorLabel, jeff.packetindicatorCheckbox, jeff.visualsTab, 320, 40, "Packet Indicator", "jeff_packetindicator", "", jeff.packetindicatorKey)
+        jeff.drawCheckbox(jeff.fakeanglesLabel, jeff.fakeanglesCheckbox, jeff.visualsTab, 320, 59, "Ghost Chams (fake aa)", "jeff_fakeangles", "", jeff.fakeanglesKey)
+        jeff.drawCheckbox(jeff.thirdpersonLabel, jeff.thirdpersonCheckbox, jeff.visualsTab, 320, 78, "Thirdperson", "jeff_thirdperson", "", jeff.thirdpersonKey)
+        jeff.drawSlider(jeff.visualsTab, jeff.thirdpersonSlider, 320, 97, jeff.thirdpersonSliderBack, "jeff_thirdpersonvalue", 3.6, 2, 1.773399013, "times", 100, jeff.thirdpersonLabel, "Thirdperson Distance", jeff.thirdpersonLabel2, "s")
+        jeff.drawCheckbox(jeff.hitmarkerLabel, jeff.hitmarkerCheckbox, jeff.visualsTab, 320, 137, "Hitmarker", "jeff_hitmarker", "", jeff.hitmarkerKey)
+        jeff.drawCheckbox(jeff.crosshairLabel, jeff.crosshairCheckbox, jeff.visualsTab, 320, 156, "Crosshair", "jeff_crosshair", "", jeff.crosshairKey)
+        jeff.drawCheckbox(jeff.angleinformationLabel, jeff.angleinformationCheckbox, jeff.visualsTab, 320, 175, "Angle Information", "jeff_angleinformation", "", jeff.angleinformationKey)
+        jeff.drawCheckbox(jeff.velocitycrosshairLabel, jeff.velocitycrosshairCheckbox, jeff.visualsTab, 320, 194, "Velocity Crosshair", "jeff_velocitycrosshair", "", jeff.velocitycrosshairKey)
+        jeff.drawCheckbox(jeff.brightnessadjustmentonLabel, jeff.brightnessadjustmentonCheckbox, jeff.visualsTab, 320, 213, "Brightness Adjustment", "jeff_brightnessadjustmenton", "", jeff.brightnessadjustmentonKey)
+        jeff.drawComboBox(jeff.visualsTab, jeff.brightnessadjustmentBox, 345, 232, jeff.BaValues, "jeff_brightnessadjustment")
+        
+        // ESP 
+        jeff.drawCheckbox(jeff.nameespLabel, jeff.nameespCheckbox, jeff.visualsTab, 45, 82, "Name ESP", "jeff_nameesp", "", jeff.nameespKey)
+        jeff.drawCheckbox(jeff.healthbarespLabel, jeff.healthbarespCheckbox, jeff.visualsTab, 45, 101, "Healthbar ESP", "jeff_healthbaresp", "", jeff.healthbarespKey)
+        jeff.drawCheckbox(jeff.armorbarespLabel, jeff.armorbarespCheckbox, jeff.visualsTab, 45, 120, "Armorbar ESP", "jeff_armorbaresp", "", jeff.armorbarespKey)
+        jeff.drawCheckbox(jeff.distanceespLabel, jeff.distanceespCheckbox, jeff.visualsTab, 45, 139, "Distance ESP", "jeff_distanceesp", "", jeff.distanceespKey)
+        jeff.drawCheckbox(jeff.boxespLabel, jeff.boxespCheckbox, jeff.visualsTab, 45, 158, "Box ESP", "jeff_boxesp", "", jeff.boxespKey)
+        jeff.drawCheckbox(jeff.glowespLabel, jeff.glowespCheckbox, jeff.visualsTab, 45, 176, "Glow ESP", "jeff_glowesp", "", jeff.glowespKey)
+        jeff.drawCheckbox(jeff.glowespignorezLabel, jeff.glowespignorezCheckbox, jeff.visualsTab, 45, 195, "Glow ESP Ignore Z", "jeff_glow_ignorez", "", jeff.glowespignorezKey)
+        jeff.drawCheckbox(jeff.hitboxespLabel, jeff.hitboxespCheckbox, jeff.visualsTab, 45, 214, "Hitbox ESP", "jeff_hitboxesp", "", jeff.hitboxespKey)
+        jeff.drawCheckbox(jeff.skeletonespLabel, jeff.skeletonespCheckbox, jeff.visualsTab, 45, 233, "Skeleton ESP", "jeff_skeletonesp", "", jeff.skeletonespKey)
+        jeff.drawCheckbox(jeff.dynamiclightsLabel, jeff.dynamiclightsCheckbox, jeff.visualsTab, 45, 252, "Dynamic Lights", "jeff_dynamiclights", "", jeff.dynamiclightsKey)
+        jeff.drawSlider(jeff.visualsTab, jeff.dynamiclightsizeSlider, 45, 271, jeff.dynamiclightsizeSliderBack, "jeff_dynamiclights_size", 3.6, 2, 1.773399013, "times", 100, jeff.dynamiclightsizeLabel, "Dynamic Light Size", jeff.dynamiclightsizeLabel2, "s")
+        jeff.drawColorOption(75, 37, jeff.espColorLabel, jeff.espColorPicker, jeff.espColorPanel, jeff.visualsTab, "ESP Color", "jeff_esp_r", "jeff_esp_g", "jeff_esp_b", 270, 40)
+        jeff.drawColorOption(75, 57, jeff.glowespColorLabel, jeff.glowespColorPicker, jeff.glowespColorPanel, jeff.visualsTab, "Glow ESP Color", "jeff_glow_r", "jeff_glow_g", "jeff_glow_b", 84, 60)
+        jeff.drawSmallColorPicker(jeff.hitboxespPanel, jeff.hitboxespColorPicker, "jeff_hitbox_r", "jeff_hitbox_g", "jeff_hitbox_b", jeff.hitboxespButton, 270, 195, 75, 210, jeff.visualsTab)
+        jeff.drawSmallColorPicker(jeff.skeletonespPanel, jeff.skeletonespColorPicker, "jeff_skeleton_r", "jeff_skeleton_g", "jeff_skeleton_b", jeff.skeletonespButton, 280, 195, 75, 229, jeff.visualsTab)
+        jeff.drawSmallColorPicker(jeff.dynamiclightsPanel, jeff.dynamiclightsColorPicker, "jeff_dynamiclights_r", "jeff_dynamiclights_g", "jeff_dynamiclights_b", jeff.dynamiclightsButton, 290, 195, 75, 248, jeff.visualsTab)
+        
+        // Models
+        jeff.drawCheckbox(jeff.chamsvisLabel, jeff.chamsvisCheckbox, jeff.visualsTab, 45, 440, "Chams", "jeff_chams", "", jeff.chamsvisKey)
+        jeff.drawCheckbox(jeff.chamshidLabel, jeff.chamshidCheckbox, jeff.visualsTab, 45, 459, "Chams Ignore Z", "jeff_chams_ignorez", "", jeff.chamshidKey)
+        jeff.drawComboBox(jeff.visualsTab, jeff.chamsBox, 45, 478, jeff.chamsType, "jeff_chams_type")
+        jeff.drawSmallColorPicker(jeff.chamsvisPanel, jeff.chamsvisColorPicker, "jeff_chams_r_visible", "jeff_chams_g_visible", "jeff_chams_b_visible", jeff.chamsvisButton, 270, 420, 75, 434, jeff.visualsTab)
+        jeff.drawSmallColorPicker(jeff.chamshidPanel, jeff.chamshidColorPicker, "jeff_chams_r_hidden", "jeff_chams_g_hidden", "jeff_chams_b_hidden", jeff.chamshidButton, 270, 420, 75, 453, jeff.visualsTab)
+
+        jeff.miscellaneousTab = vgui.Create("DPanel", jeff.mainMenu)
+        jeff.miscellaneousTab:SetSize(585, 580)
+        jeff.miscellaneousTab:SetPos(700, 600)
+        jeff.miscellaneousTab.Paint = function(self, w, h) 
+            // Misc
+                // Background
+                jeff.drawRect(32, 22, 246, 548, jeff.BackgroundColor)
+
+                // Left Line
+                jeff.drawRect(30, 20, 1, 550, jeff.Gray)
+                jeff.drawRect(29, 20, 1, 550, jeff.Black)
+
+                // Right Line
+                jeff.drawRect(277, 20, 1, 550, jeff.Gray)
+                jeff.drawRect(278, 20, 1, 550, jeff.Black)
+
+                // Top Line 1
+                jeff.drawRect(30, 20, 20, 1, jeff.Gray)
+                jeff.drawRect(29, 19, 21, 1, jeff.Black)
+
+                // Top Line 2
+                jeff.drawRect(137, 20, 140, 1, jeff.Gray)
+                jeff.drawRect(137, 19, 142, 1, jeff.Black)
+
+                // Bottom Line
+                jeff.drawRect(31, 569, 246, 1, jeff.Gray)
+                jeff.drawRect(29, 570, 250, 1, jeff.Black)
+
+                // Top Text
+                jeff.drawText(53, 14, "Miscellaneous", "menu_title", jeff.WhiteGray)
+
+            // Settings
+                // Background
+                jeff.drawRect(307, 22, 246, 200, jeff.BackgroundColor)
+
+                // Left Line
+                jeff.drawRect(305, 20, 1, 200, jeff.Gray)
+                jeff.drawRect(304, 20, 1, 200, jeff.Black)
+
+                // Right Line
+                jeff.drawRect(554, 20, 1, 200, jeff.Gray)
+                jeff.drawRect(555, 20, 1, 201, jeff.Black)
+
+                // Top Line 1
+                jeff.drawRect(305, 20, 20, 1, jeff.Gray)
+                jeff.drawRect(304, 19, 22, 1, jeff.Black)
+
+                // Top Line 2
+                jeff.drawRect(380, 20, 174, 1, jeff.Gray)
+                jeff.drawRect(380, 19, 176, 1, jeff.Black)
+
+                // Bottom Line
+                jeff.drawRect(305, 220, 250, 1, jeff.Gray)
+                jeff.drawRect(304, 221, 252, 1, jeff.Black)
+
+                // Top Text
+                jeff.drawText(330, 14, "Settings", "menu_title", jeff.WhiteGray)
+
+            // Presets
+                // Background
+                jeff.drawRect(307, 252, 246, 318, jeff.BackgroundColor)
+
+                // Left Line
+                jeff.drawRect(305, 250, 1, 320, jeff.Gray)
+                jeff.drawRect(304, 250, 1, 320, jeff.Black)
+
+                // Right Line
+                jeff.drawRect(554, 250, 1, 320, jeff.Gray)
+                jeff.drawRect(555, 250, 1, 320, jeff.Black)
+
+                // Top Line 1
+                jeff.drawRect(305, 250, 20, 1, jeff.Gray)
+                jeff.drawRect(304, 249, 22, 1, jeff.Black)
+
+                // Top Line 2
+                jeff.drawRect(377, 250, 177, 1, jeff.Gray)
+                jeff.drawRect(377, 249, 179, 1, jeff.Black)
+
+                // Bottom Line
+                jeff.drawRect(305, 568, 250, 1, jeff.Gray)
+                jeff.drawRect(304, 569, 252, 1, jeff.Black)
+
+                // Top Text
+                jeff.drawText(330, 242, "Presets", "menu_title", jeff.WhiteGray)
+        end
+
+        // Misc
+        jeff.drawCheckbox(jeff.watermarkLabel, jeff.watermarkCheckbox, jeff.miscellaneousTab, 45, 40, "Watermark", "jeff_watermark", "[F6]", jeff.watermarkKey)
+        jeff.drawCheckbox(jeff.focusonopenLabel, jeff.focusonopenCheckbox, jeff.miscellaneousTab, 45, 59, "Focus On Open", "jeff_focusonopen", "", jeff.focusonopenKey)
+        jeff.drawCheckbox(jeff.menufadeLabel, jeff.menufadeCheckbox, jeff.miscellaneousTab, 45, 78, "Menu Fade", "jeff_menufade", "", jeff.menufadeKey)
+        jeff.drawSlider(jeff.miscellaneousTab, jeff.fovSlider, 45, 97, jeff.fovSliderBack, "jeff_fov", 7.2, 4, 1.773399013, "times", 100, jeff.fovLabel, "Override FOV", jeff.fovLabel2, "°")
+        jeff.drawCheckbox(jeff.bunnyhopLabel, jeff.bunnyhopCheckbox, jeff.miscellaneousTab, 45, 137, "Bunnyhop", "jeff_bunnyhop", "", jeff.bunnyhopKey)
+        jeff.drawCheckbox(jeff.airstrafeLabel, jeff.airstrafeCheckbox, jeff.miscellaneousTab, 45, 156, "Airstrafe", "jeff_airstrafe", "", jeff.airstrafeKey)
+        jeff.drawCheckbox(jeff.circlestrafeLabel, jeff.circlestrafeCheckbox, jeff.miscellaneousTab, 45, 175, "Circlestrafe", "jeff_circlestrafe", "[G]", jeff.circlestrafeKey)
+        jeff.drawCheckbox(jeff.fakeduckLabel, jeff.fakeduckCheckbox, jeff.miscellaneousTab, 45, 194, "Fakeduck", "jeff_fakeduck", "", jeff.fakeduckKey)
+        jeff.drawComboBox(jeff.miscellaneousTab, jeff.fakeduckBox, 65, 213, jeff.fakeduckMethod, "jeff_fakeduckmethod")
+        jeff.drawCheckbox(jeff.lagexploitLabel, jeff.lagexploitCheckbox, jeff.miscellaneousTab, 45, 250, "Lag Exploit", "jeff_lagexploit", "[F]", jeff.lagexploitKey)
+        jeff.drawSlider(jeff.miscellaneousTab, jeff.lagexploitSlider, 45, 269, jeff.lagexploitSliderBack, "jeff_lagexploitvalue", 1, 0.554, 1.77, "times", 360, jeff.lagexploitLabel2, "Lag Exploit Value", jeff.lagexploitLabel2, "^")
+        jeff.drawCheckbox(jeff.fakelagLabel, jeff.fakelagCheckbox, jeff.miscellaneousTab, 45, 307, "Fakelag", "jeff_fakelag", "", jeff.fakelagKey)
+        jeff.drawComboBox(jeff.miscellaneousTab, jeff.fakelagBox, 65, 326, jeff.fakelagMethod, "jeff_fakelagmethod")
+        jeff.drawComboBox(jeff.miscellaneousTab, jeff.fakelagTypeBox, 65, 358, jeff.fakelagType, "jeff_fakelagtype")
+        jeff.drawSlider(jeff.miscellaneousTab, jeff.fakelagSlider, 45, 387, jeff.fakelagSliderBack, "jeff_fakelagvalue", 18, 10, 1.773399013, "times", 13, jeff.fakelagLabel3, "Fakelag Value", jeff.fakelagLabel4, "p")
+        jeff.drawCheckbox(jeff.logeventsLabel, jeff.logeventsCheckbox, jeff.miscellaneousTab, 45, 426, "Log Events", "jeff_eventlog", "", jeff.logeventsKey)
+        jeff.drawCheckbox(jeff.terroristFinderLabel, jeff.terroristFinderCheckbox, jeff.miscellaneousTab, 45, 445, "Terrorist Finder", "jeff_traitorfinder", "", jeff.terroristFinderKey)
+        jeff.drawCheckbox(jeff.emotespamLabel, jeff.emotespamCheckbox, jeff.miscellaneousTab, 45, 464, "Emote Spammer", "jeff_emotespammer", "", jeff.emotespamKey)
+        jeff.drawComboBox(jeff.miscellaneousTab, jeff.emotespamBox, 65, 483, jeff.Emotes, "jeff_emote")
+        jeff.drawCheckbox(jeff.rapidfireLabel, jeff.rapidfireCheckbox, jeff.miscellaneousTab, 45, 520, "Rapid Fire", "jeff_rapidfire", "", jeff.rapidfireKey)
+        jeff.drawCheckbox(jeff.oneEightyLabel, jeff.oneEightyCheckbox, jeff.miscellaneousTab, 45, 539, "180jeff", "jeff_180", "[LALT]", jeff.oneEightyKey)
+
+        // Settings
+        jeff.drawCheckbox(jeff.menukeyLabel, jeff.menukeyCheckbox, jeff.miscellaneousTab, 320, 61, "Menu Key", "", "[INS]", jeff.menukeyKey)
+        jeff.drawCheckbox(jeff.anticacLabel, jeff.anticacCheckbox, jeff.miscellaneousTab, 320, 81, "Anti-CAC", "jeff_anticac", "", jeff.anticacKey)
+        jeff.drawCheckbox(jeff.antiscreenshotLabel, jeff.antiscreenshotCheckbox, jeff.miscellaneousTab, 320, 100, "Anti-Screenshot", "jeff_antiscreenshot", "", jeff.antiscreenshotKey)
+        jeff.drawButton(jeff.miscellaneousTab, jeff.hookPrintButton, 337, 120, "Print Hook Table", function() PrintTable(hook.GetTable()) end)
+        jeff.drawButton(jeff.miscellaneousTab, jeff.fixFakeDuckButton, 337, 150, "Fix Fakeduck", function() RunConsoleCommand("-duck") end)
+        jeff.drawButton(jeff.miscellaneousTab, jeff.copyconfigButton, 337, 180, "Copy Config to Clipboard", function() SetClipboardText(file.Read("encore/".. jeff.configs[GetConVar("jeff_chosenconfig"):GetInt()].. ".txt", "DATA")) end)
+        jeff.drawColorOption(350, 37, jeff.menuColorLabel, jeff.menuColorPicker, jeff.menuColorPanel, jeff.miscellaneousTab, "Menu Color", "jeff_currentmenu_R", "jeff_currentmenu_G", "jeff_currentmenu_B", 360, 57)
+        
+        // Presets
+        jeff.drawComboBox(jeff.miscellaneousTab, jeff.configBox, 337, 280, jeff.configs, "jeff_chosenconfig")
+        jeff.drawButton(jeff.miscellaneousTab, jeff.loadButton, 337, 310, "Load", function() jeff.configLoad() end)
+        jeff.drawButton(jeff.miscellaneousTab, jeff.saveButton, 337, 340, "Save", function() jeff.configSave() end)
+        jeff.drawButton(jeff.miscellaneousTab, jeff.resetButton, 337, 370, "Reset", function() jeff.configReset() end)
+        jeff.drawButton(jeff.miscellaneousTab, jeff.unloadButton, 337, 400, "Unload", function() jeff.unloadCheat() end)
+
+        jeff.colorsTab = vgui.Create("DPanel", jeff.mainMenu)
+        jeff.colorsTab:SetSize(585, 580)
+        jeff.colorsTab:SetPos(700, 600)
+        jeff.colorsTab.Paint = function(self, w, h) end
+
+        jeff.whitelistTab = vgui.Create("DPanel", jeff.mainMenu)
+        jeff.whitelistTab:SetSize(585, 580)
+        jeff.whitelistTab:SetPos(700, 600)
+        jeff.whitelistTab.Paint = function(self, w, h) end
+    end
+
+    function jeff.AddTabButtons()
+        jeff.ragebotButton = vgui.Create("DButton", jeff.mainMenu)
+        jeff.ragebotButton:SetSize(96, 89)
+        jeff.ragebotButton:SetPos(9, 25)
+        jeff.ragebotButton:SetText("")
+        jeff.ragebotButton.Paint = function(self, w, h) end
+        jeff.ragebotButton.DoClick = function() jeff.currentTab = "ragebot" jeff.ragebotTab:MoveTo(105, 12, 0, 0) jeff.legitbotTab:MoveTo(700, 600, 0, 0) jeff.visualsTab:MoveTo(700, 600, 0, 0) jeff.miscellaneousTab:MoveTo(700, 600, 0, 0) jeff.colorsTab:MoveTo(700, 600, 0, 0) jeff.whitelistTab:MoveTo(700, 600, 0, 0) end
+
+        jeff.legitbotButton = vgui.Create("DButton", jeff.mainMenu)
+        jeff.legitbotButton:SetSize(96, 89)
+        jeff.legitbotButton:SetPos(9, 114)
+        jeff.legitbotButton:SetText("")
+        jeff.legitbotButton.Paint = function(self, w, h) end
+        jeff.legitbotButton.DoClick = function() jeff.currentTab = "legitbot" jeff.ragebotTab:MoveTo(700, 600, 0, 0) jeff.legitbotTab:MoveTo(105, 12, 0, 0) jeff.visualsTab:MoveTo(700, 600, 0, 0) jeff.miscellaneousTab:MoveTo(700, 600, 0, 0) jeff.colorsTab:MoveTo(700, 600, 0, 0) jeff.whitelistTab:MoveTo(700, 600, 0, 0) end
+
+        jeff.visualsButton = vgui.Create("DButton", jeff.mainMenu)
+        jeff.visualsButton:SetSize(96, 89)
+        jeff.visualsButton:SetPos(9, 203)
+        jeff.visualsButton:SetText("")
+        jeff.visualsButton.Paint = function(self, w, h) end
+        jeff.visualsButton.DoClick = function() jeff.currentTab = "visuals" jeff.ragebotTab:MoveTo(700, 600, 0, 0) jeff.legitbotTab:MoveTo(700, 600, 0, 0) jeff.visualsTab:MoveTo(105, 12, 0, 0) jeff.miscellaneousTab:MoveTo(700, 600, 0, 0) jeff.colorsTab:MoveTo(700, 600, 0, 0) jeff.whitelistTab:MoveTo(700, 600, 0, 0) end
+
+        jeff.miscellaneousButton = vgui.Create("DButton", jeff.mainMenu)
+        jeff.miscellaneousButton:SetSize(96, 89)
+        jeff.miscellaneousButton:SetPos(9, 292)
+        jeff.miscellaneousButton:SetText("")
+        jeff.miscellaneousButton.Paint = function(self, w, h) end
+        jeff.miscellaneousButton.DoClick = function() jeff.currentTab = "miscellaneous" jeff.ragebotTab:MoveTo(700, 600, 0, 0) jeff.legitbotTab:MoveTo(700, 600, 0, 0) jeff.visualsTab:MoveTo(700, 600, 0, 0) jeff.miscellaneousTab:MoveTo(105, 12, 0, 0) jeff.colorsTab:MoveTo(700, 600, 0, 0) jeff.whitelistTab:MoveTo(700, 600, 0, 0) end
+
+        jeff.colorsButton = vgui.Create("DButton", jeff.mainMenu)
+        jeff.colorsButton:SetSize(96, 89)
+        jeff.colorsButton:SetPos(9, 381)
+        jeff.colorsButton:SetText("")
+        jeff.colorsButton.Paint = function(self, w, h) end
+        jeff.colorsButton.DoClick = function() jeff.currentTab = "colors" jeff.ragebotTab:MoveTo(700, 600, 0, 0) jeff.legitbotTab:MoveTo(700, 600, 0, 0) jeff.visualsTab:MoveTo(700, 600, 0, 0) jeff.miscellaneousTab:MoveTo(700, 600, 0, 0) jeff.colorsTab:MoveTo(105, 12, 0, 0) jeff.whitelistTab:MoveTo(700, 600, 0, 0) end
+
+        jeff.whitelistButton = vgui.Create("DButton", jeff.mainMenu)
+        jeff.whitelistButton:SetSize(96, 89)
+        jeff.whitelistButton:SetPos(9, 470)
+        jeff.whitelistButton:SetText("")
+        jeff.whitelistButton.Paint = function(self, w, h) end
+        jeff.whitelistButton.DoClick = function() jeff.currentTab = "whitelist" jeff.ragebotTab:MoveTo(700, 600, 0, 0) jeff.legitbotTab:MoveTo(700, 600, 0, 0) jeff.visualsTab:MoveTo(700, 600, 0, 0) jeff.miscellaneousTab:MoveTo(700, 600, 0, 0) jeff.colorsTab:MoveTo(700, 600, 0, 0) jeff.whitelistTab:MoveTo(105, 12, 0, 0) end
+    end
+    
+    function jeff.openMenu()
+        jeff.menuOpen = true
+        jeff.Volume = 1
+
+        jeff.mainMenu = vgui.Create("DFrame")
+        jeff.mainMenu:SetSize(700, 600)
+        jeff.mainMenu:SetPos(jeff.menuX, jeff.menuY)
+        jeff.mainMenu:MakePopup()
+        jeff.mainMenu:SetDraggable(true)
+        jeff.mainMenu:ShowCloseButton(false)
+        jeff.mainMenu:SetTitle("")
+
+        -- sound.PlayFile("addons/encore/resources/background.mp3", "", function(station)
+        --     if(IsValid(station)) then
+        --         station:Play()
+        --         station:EnableLooping(true)
+
+        --         jeff.radioIsValid = true
+
+        --         function jeff.setVolume(volume)
+        --             station:SetVolume(volume)
+        --         end
+
+        --         function jeff.StopSong()
+        --             station:Pause()
+        --         end
+        --     end
+        -- end)
+        
+        if(GetConVar("jeff_menufade"):GetInt() == 1) then
+            jeff.mainMenu:SetAlpha(0)
+        else
+            jeff.mainMenu:SetAlpha(255)
+        end
+
+        function jeff.closeMenu()
+            jeff.menuOpen = false
+            jeff.menuX, jeff.menuY = jeff.mainMenu:GetPos()
+            jeff.mainMenu:Close()
+            jeff.menuAlpha = 0
+            jeff.menuClosing = false
+        end
+
+        jeff.AddTabs()
+        jeff.AddTabButtons()
+
+        if(jeff.currentTab == "ragebot") then
+            jeff.ragebotTab:MoveTo(105, 12, 0, 0)
+        elseif(jeff.currentTab == "legitbot") then
+            jeff.legitbotTab:MoveTo(105, 12, 0, 0)
+        elseif(jeff.currentTab == "visuals") then
+            jeff.visualsTab:MoveTo(105, 12, 0, 0)
+        elseif(jeff.currentTab == "miscellaneous") then
+            jeff.miscellaneousTab:MoveTo(105, 12, 0, 0)
+        elseif(jeff.currentTab == "colors") then
+            jeff.colorsTab:MoveTo(105, 12, 0, 0)
+        elseif(jeff.currentTab == "whitelist") then
+            jeff.whitelistTab:MoveTo(105, 12, 0, 0)
+        end
+
+        jeff.mainMenu.Paint = function(self, w, h)
+            if(jeff.mainMenu:GetAlpha() < 255 && !jeff.menuClosing) then jeff.menuAlpha = jeff.menuAlpha + 5 end
+            if(jeff.menuClosing && GetConVar("jeff_menufade"):GetInt() == 1) then jeff.menuAlpha = jeff.menuAlpha - 5 if(jeff.mainMenu:GetAlpha() <= 0) then jeff.closeMenu() end elseif(jeff.menuClosing && GetConVar("jeff_menufade"):GetInt() == 0) then jeff.closeMenu() end
+            if(GetConVar("jeff_menufade"):GetInt() == 1) then jeff.mainMenu:SetAlpha(jeff.menuAlpha) end
+            if(GetConVar("jeff_antiscreenshot"):GetInt() == 1) then jeff.mainMenu:SetRenderInScreenshots(false) else jeff.mainMenu:SetRenderInScreenshots(true) end
+            jeff.DrawBackground(self, w, h)
+        end
+    end
+
+// Hooks
+jeff.addHook("HUDPaint", function()
+    if(GetConVar("jeff_antiscreenshot"):GetInt() == 1 && input.IsKeyDown(KEY_F12) || input.IsKeyDown(KEY_F5)) then return end
+    if(jeff.menuOpen) then if(GetConVar("jeff_focusonopen"):GetInt() == 1) then if(jeff.backgroundAlpha < 230) then jeff.backgroundAlpha = jeff.backgroundAlpha + 2 end else if(jeff.backgroundAlpha > 0) then jeff.backgroundAlpha = jeff.backgroundAlpha - 2 end end else if(jeff.backgroundAlpha > 0) then jeff.backgroundAlpha = jeff.backgroundAlpha - 2 end end
+    if(jeff.infoOpen) then if(GetConVar("jeff_focusonopen"):GetInt() == 1) then if(jeff.infoBackgroundAlpha < 230) then jeff.infoBackgroundAlpha = jeff.infoBackgroundAlpha + 2 end else if(jeff.infoBackgroundAlpha > 0) then jeff.infoBackgroundAlpha = jeff.infoBackgroundAlpha - 2 end end else if(jeff.infoBackgroundAlpha > 0) then jeff.infoBackgroundAlpha = jeff.infoBackgroundAlpha - 2 end end
+    jeff.drawRect(0, 0, ScrW(), ScrH(), Color(0, 0, 0, jeff.backgroundAlpha))
+    jeff.drawRect(0, 0, ScrW(), ScrH(), Color(0, 0, 0, jeff.infoBackgroundAlpha))
+
+    jeff.tStmp = os.time()
+    jeff.tStr = os.date("%H:%M:%S", jeff.tStmp)
+
+    if(GetConVar("jeff_velocitycrosshair"):GetInt() == 1) then
+        jeff.drawPoly(jeff.drawCircle(ScrW() / 2, ScrH() / 2, jeff.ply:GetVelocity():Length() / 3, 360), Color(5, 5, 5, 120))
+    end
+
+    if(GetConVar("jeff_watermark"):GetInt() == 1) then
+        jeff.drawText(2, 1, jeff.NameLen, "ChatFont", jeff.White)
+        jeff.drawText(2 + surface.GetTextSize(jeff.NameLen), 1, jeff.NameLen2, "ChatFont", jeff.Green)
+        jeff.drawText(12 + surface.GetTextSize(jeff.Name), 1, jeff.tStr, "ChatFont", jeff.White)
+    end
+
+    if(GetConVar("jeff_angleinformation"):GetInt() == 1) then
+        if(GetConVar("jeff_eventlog"):GetInt() == 1) then
+            jeff.drawText(2, 299, "Angle Info: ", "ChatFont", jeff.White)
+
+            if(jeff.ply:EyeAngles().x > -89 && jeff.ply:EyeAngles().x < 89) then
+                jeff.drawText(12, 316, "X: ".. math.Round(jeff.ply:EyeAngles().x), "ChatFont", jeff.White)
+            else
+                jeff.drawText(12, 316, "X: ".. math.Round(jeff.ply:EyeAngles().x), "ChatFont", jeff.Red)
+            end
+
+            jeff.drawText(12, 333, "Y: ".. math.Round(jeff.ply:EyeAngles().y), "ChatFont", jeff.White)
+
+            jeff.drawText(12, 350, "Z: ".. math.Round(jeff.ply:EyeAngles().z), "ChatFont", jeff.White)
+
+            if(_G.GetConVar("jeff_fakelag"):GetInt() == 1) then
+                jeff.drawText(12, 367, "Fake X: ".. math.Round(jeff.fakeX), "ChatFont", jeff.White)
+                jeff.drawText(12, 384, "Fake Y: ".. math.Round(jeff.fakeY), "ChatFont", jeff.White)
+            end
+        else
+            jeff.drawText(2, 19, "Angle Info: ", "ChatFont", jeff.White)
+
+            if(jeff.ply:EyeAngles().x > -89.1 && jeff.ply:EyeAngles().x < 89.1) then
+                jeff.drawText(12, 36, "X: ".. math.Round(jeff.ply:EyeAngles().x), "ChatFont", jeff.White)
+            else
+                jeff.drawText(12, 36, "X: ".. math.Round(jeff.ply:EyeAngles().x), "ChatFont", jeff.Red)
+            end
+
+            jeff.drawText(12, 53, "Y: ".. math.Round(jeff.ply:EyeAngles().y), "ChatFont", jeff.White)
+
+            jeff.drawText(12, 70, "Z: ".. math.Round(jeff.ply:EyeAngles().z), "ChatFont", jeff.White)
+
+            if(_G.GetConVar("jeff_fakelag"):GetInt() == 1) then
+                jeff.drawText(12, 87, "Fake X: ".. math.Round(jeff.fakeX), "ChatFont", jeff.White)
+                jeff.drawText(12, 104, "Fake Y: ".. math.Round(jeff.fakeY), "ChatFont", jeff.White)
+            end
+        end
+    end
+
+    if(GetConVar("jeff_crosshair"):GetInt() == 1) then
+        jeff.drawText(jeff.ply:GetEyeTrace().HitPos:ToScreen().x - surface.GetTextSize("+") / 2, jeff.ply:GetEyeTrace().HitPos:ToScreen().y - surface.GetTextSize("+") / 2, "+", "ChatFont", jeff.White)
+    end
+
+    if(GetConVar("jeff_packetindicator"):GetInt() == 1) then
+        if(GetConVar("jeff_fakelagtype"):GetInt() == 1) then
+            if(memesendpacket) then
+                jeff.drawText(ScrW() - surface.GetTextSize("PACKETS") - 5, 2, "PACKETS", "ChatFont", jeff.Green)
+            else
+                jeff.drawText(ScrW() - surface.GetTextSize("PACKETS") - 5, 2, "PACKETS", "ChatFont", jeff.Red)
+            end
+        else
+            if(jeff.hostTimescale) then
+                jeff.drawText(ScrW() - surface.GetTextSize("PACKETS") - 5, 2, "PACKETS", "ChatFont", jeff.Green)
+            else
+                jeff.drawText(ScrW() - surface.GetTextSize("PACKETS") - 5, 2, "PACKETS", "ChatFont", jeff.Red)
+            end
+        end
+    end
+
+    if(GetConVar("jeff_hitmarker"):GetInt() == 1) then
+        if(jeff.Hit) then
+            jeff.hitmarkerAlpha = jeff.hitmarkerAlpha - 5
+            jeff.drawMaterialRect(jeff.ply:GetEyeTrace().HitPos:ToScreen().x - 16, jeff.ply:GetEyeTrace().HitPos:ToScreen().y - 16, 32, 32, Color(255, 255, 255, jeff.hitmarkerAlpha), jeff.hitmarkerMaterial)
+
+            jeff.PlayHitmarkerSound()
+        else 
+            jeff.hitmarkerAlpha = 255
+        end
+    end
+
+    for k,v in pairs(player.GetAll()) do
+		if(!jeff.em.IsValid(v) || jeff.em.Health(v) < 1 || v == jeff.ply) then continue end
+
+        if(IsFirstTimePredicted()) then
+            v.espAlpha = 0
+        end
+        
+        if(GetConVar("jeff_hitboxesp"):GetInt() == 1) then
+            jeff.HitboxESP(v)
+        end
+
+        if(GetConVar("jeff_skeletonesp"):GetInt() == 1) then
+            jeff.SkeletonESP(v)
+        end
+
+        if(GetConVar("jeff_boxesp"):GetInt() == 1) then
+            jeff.BoxESP(v)
+        end
+
+        if(GetConVar("jeff_nameesp"):GetInt() == 1) then
+            jeff.NameESP(v)
+        end
+
+        if(GetConVar("jeff_healthbaresp"):GetInt() == 1) then
+            jeff.HealthbarESP(v)
+        end
+
+        if(GetConVar("jeff_armorbaresp"):GetInt() == 1) then
+            jeff.ArmorbarESP(v)
+        end
+
+        if(GetConVar("jeff_distanceesp"):GetInt() == 1) then
+            jeff.DistanceESP(v)
+        end
+
+        jeff.DevESP(v)
+
+        if(jeff.em.IsDormant(v) && v.espAlpha != nil && v.espAlpha > 50) then v.espAlpha = v.espAlpha - 5 elseif(!jeff.em.IsDormant(v) && v.espAlpha != nil && v.espAlpha < 255) then v.espAlpha = v.espAlpha + 5 end
+    end
+end)
+
+jeff.addHook("PreRender", function()
+    if(_G.GetConVar("jeff_brightnessadjustment"):GetInt() == 3 && GetConVar("jeff_brightnessadjustmenton"):GetInt() == 1) then
+        render.SetLightingMode(1)
+        jeff.fullbright = true
+    end
+end)
+
+jeff.addHook("PreRender", jeff.fixFullbright)
+jeff.addHook("PreDrawHUD", jeff.fixFullbright)
+
+jeff.addHook("RenderScreenspaceEffects", function()
+    if(GetConVar("jeff_chams"):GetInt() == 1) then
+        for k,v in pairs(player.GetAll()) do
+            if(!jeff.em.IsValid(v) || jeff.em.Health(v) < 1 || v == jeff.ply || jeff.em.IsDormant(v)) then continue end
+            jeff.Chams(v)
+        end
+    end
+end)
+
+jeff.addHook("PreDrawHalos", function()
+    if(GetConVar("jeff_antiscreenshot"):GetInt() == 1 && input.IsKeyDown(KEY_F12) || input.IsKeyDown(KEY_F5)) then return end
+    if(GetConVar("jeff_glowesp"):GetInt() == 1) then
+        halo.Add(player.GetAll(), Color(GetConVar("jeff_glow_r"):GetInt(), GetConVar("jeff_glow_g"):GetInt(), GetConVar("jeff_glow_b"):GetInt()), 2, 2, 2, true, jeff.fromIntToBool("jeff_glow_ignorez"))
+    end
+end)
+
+jeff.addHook("ShouldDrawLocalPlayer", function()
+    if(GetConVar("jeff_antiscreenshot"):GetInt() == 1 && input.IsKeyDown(KEY_F12) || input.IsKeyDown(KEY_F5)) then return end
+    if(GetConVar("jeff_thirdperson"):GetInt() == 1) then return(true) else return(false) end
+end)
+
+jeff.addHook("CalcView", function(ply, pos, ang, fov)
+    if(GetConVar("jeff_antiscreenshot"):GetInt() == 1 && input.IsKeyDown(KEY_F12) || input.IsKeyDown(KEY_F5)) then return end
+    if(GetConVar("jeff_thirdperson"):GetInt() == 1) then
+        tr = util.TraceLine({
+            start = pos - Vector(0, -20, -20),
+            endpos = (pos + jeff.am.Forward(jeff.fa) * (GetConVar("jeff_thirdpersonvalue"):GetInt() / 7.2) * -10 || pos),
+            filter = nil
+        })
+
+        view = {}
+
+        view.origin = tr.HitPos
+        if(GetConVar("jeff_antiaimon"):GetInt() == 1) then
+            view.angles = jeff.GetAngle(jeff.fa)
+        else
+            view.angles = ang
+        end
+        view.fov = fov
+
+        return(view)
+    else
+        view = {}
+
+        view.origin = pos
+        if(GetConVar("jeff_antiaimon"):GetInt() == 1) then
+            view.angles = jeff.GetAngle(jeff.fa)
+        else
+            view.angles = ang
+        end
+        view.fov = 90 + (GetConVar("jeff_fov"):GetInt() / 7.2)
+        
+        return(view)
+    end
+end)
+
+jeff.addHook("CreateMove", function(cmd)
+    if(GetConVar("jeff_antiscreenshot"):GetInt() == 1 && input.IsKeyDown(KEY_F12) || input.IsKeyDown(KEY_F5)) then return end
+    if(GetConVar("jeff_bunnyhop"):GetInt() == 1) then
+        jeff.Bunnyhop(cmd)
+    end
+
+    if(GetConVar("jeff_circlestrafe"):GetInt() == 1) then
+        jeff.Circlestrafe(cmd)
+    end
+
+    if(GetConVar("jeff_fakeduck"):GetInt() == 1) then
+        jeff.Fakeduck()
+    end
+
+    if(GetConVar("jeff_slowwalk"):GetInt() == 1) then
+        jeff.Slowwalk(cmd)
+    end
+end)
+
+jeff.addHook("CreateMove", function(ucmd)
+    if(GetConVar("jeff_antiscreenshot"):GetInt() == 1 && input.IsKeyDown(KEY_F12) || input.IsKeyDown(KEY_F5)) then return end
+    memesendpacket = true
+    jeff.hostTimescale = true
+
+    if(GetConVar("jeff_airstrafe"):GetInt() == 1) then
+        jeff.Airstrafe(ucmd)
+    end
+
+    if(GetConVar("jeff_fakelag"):GetInt() == 1) then
+        if(GetConVar("jeff_fakelagtype"):GetInt() == 1) then
+            jeff.fakelagmemesendpacket(ucmd)
+        else
+            jeff.fakelaghosttimescale(ucmd)
+        end
+    end
+
+    if(GetConVar("jeff_rapidfire"):GetInt() == 1) then
+        jeff.Rapidfire(ucmd)
+    end
+
+    jeff.lagexploit()
+
+    encore(ucmd)
+
+    if(GetConVar("jeff_aimbot"):GetInt() == 1) then
+        jeff.Aimbot(ucmd)
+        jeff.x = ucmd:GetViewAngles().x
+        if(jeff.antiaimIgnore && GetConVar("jeff_antiaimon"):GetInt() == 0) then
+            jeff.FixMovement(ucmd, jeff.x > 89 && true || jeff.x < -89 && true || false)
+        end
+    else
+        jeff.antiaimIgnore = false
+    end
+    
+    if(GetConVar("jeff_antiaimon"):GetInt() == 1) then
+        jeff.AntiAim(ucmd)
+        jeff.x = ucmd:GetViewAngles().x
+        jeff.FixMovement(ucmd, jeff.x > 89 && true || jeff.x < -89 && true || false)
+    else
+        jeff.realRenderY = jeff.ply:EyeAngles().y
+        jeff.realRenderX = jeff.ply:EyeAngles().x
+    end
+
+    if(GetConVar("jeff_180"):GetInt() == 1) then
+        jeff.oneEighty(ucmd)
+    end
+end)
+
+jeff.addHook("RenderScene", function()
+    if(GetConVar("jeff_antiscreenshot"):GetInt() == 1 && input.IsKeyDown(KEY_F12) || input.IsKeyDown(KEY_F5)) then return end
+    if(GetConVar("jeff_brightnessadjustmenton"):GetInt() == 1) then
+        if(GetConVar("jeff_brightnessadjustment"):GetInt() == 1) then
+            if(input.IsKeyDown(KEY_F12) || input.IsKeyDown(KEY_F5)) then 
+                jeff.ChangeSkybox("sky_day01_04")
+                for k,v in pairs(game.GetWorld():GetMaterials()) do
+                    Material(v):SetVector("$color", Vector(1, 1, 1))
+                end
+            else
+                jeff.ChangeSkybox("sky_borealis01")
+                for k,v in pairs(game.GetWorld():GetMaterials()) do
+                    Material(v):SetVector("$color", Vector(0.1, 0.1, 0.1))
+                end
+                render.SuppressEngineLighting(true)
+                render.ResetModelLighting(0.2, 0.2, 0.2)
+                render.SetLightingMode(0) 
+            end
+        elseif(GetConVar("jeff_brightnessadjustment"):GetInt() == 2) then
+            jeff.ChangeSkybox("sky_day01_04")
+            for k,v in pairs(game.GetWorld():GetMaterials()) do
+                Material(v):SetVector("$color", Vector(math.random(0, 205) / 255, math.random(0, 205) / 255, math.random(0, 205) / 255))
+            end
+        else
+            jeff.ChangeSkybox("sky_day01_04")
+            for k,v in pairs(game.GetWorld():GetMaterials()) do
+                Material(v):SetVector("$color", Vector(1, 1, 1))
+            end
+        end
+    else
+        jeff.ChangeSkybox("sky_day01_04")
+        for k,v in pairs(game.GetWorld():GetMaterials()) do
+            Material(v):SetVector("$color", Vector(1, 1, 1))
+        end
+    end
+
+    if(GetConVar("jeff_antiaimon"):GetInt() == 1) then
+        jeff.ply:SetPoseParameter("aim_pitch", jeff.realRenderX)
+        jeff.ply:SetPoseParameter("head_pitch", jeff.realRenderX)
+        jeff.ply:SetPoseParameter("body_yaw", jeff.realRenderY)
+        jeff.ply:SetPoseParameter("aim_yaw", 0)
+        jeff.ply:SetRenderAngles(Angle(0, jeff.realRenderY, 0))
+    end
+
+    if(jeff.fakeAngles == NULL) then
+        jeff.fakeAngles = ClientsideModel(jeff.ply:GetModel(), 1)
+    end
+    jeff.fakeAngles:SetNoDraw(true)
+    jeff.fakeAngles:SetSequence(jeff.ply:GetSequence())
+	jeff.fakeAngles:SetCycle(jeff.ply:GetCycle())
+
+    jeff.fakeAngles:SetModel(jeff.ply:GetModel())
+    jeff.fakeAngles:SetPos(Vector(jeff.ply:GetPos().x, jeff.ply:GetPos().y, jeff.ply:GetPos().z))
+
+	jeff.fakeAngles:SetPoseParameter("aim_pitch", jeff.fakeX)
+    jeff.fakeAngles:SetPoseParameter("move_x", jeff.ply:GetPoseParameter("move_x"))
+	jeff.fakeAngles:SetPoseParameter("move_y", jeff.ply:GetPoseParameter("move_y"))
+	jeff.fakeAngles:SetPoseParameter("head_pitch", jeff.fakeX)
+	jeff.fakeAngles:SetPoseParameter("body_yaw", jeff.fakeY)
+	jeff.fakeAngles:SetPoseParameter("aim_yaw", 0)
+
+	jeff.fakeAngles:InvalidateBoneCache()
+    jeff.fakeAngles:SetRenderAngles(Angle(0, jeff.fakeY, 0))
+end)
+
+jeff.addHook("RenderScreenspaceEffects", function()
+    if(GetConVar("jeff_antiscreenshot"):GetInt() == 1 && input.IsKeyDown(KEY_F12) || input.IsKeyDown(KEY_F5)) then return end
+    if(GetConVar("jeff_fakeangles"):GetInt() == 1 && GetConVar("jeff_thirdperson"):GetInt() == 1 && GetConVar("jeff_fakelagvalue"):GetInt() / 18 >= 1 && GetConVar("jeff_fakelag"):GetInt() == 1 && GetConVar("jeff_antiaimon"):GetInt() == 1) then
+        jeff.DrawFakeAngle(jeff.fakeAngles)
+    end
+end)
+
+jeff.addHook("ScalePlayerDamage", function(ply, hitgroup, dmginfo)
+    jeff.Hit = true
+    if(jeff.Hit) then timer.Simple(0.2, function() jeff.Hit = false jeff.hitmarkerSoundPlaying = false end) end
+end)
+
+jeff.addHook("player_connect", function(data)
+    if(GetConVar("jeff_eventlog"):GetInt() == 1) then
+        jeff.addEventlistMessage(data[""].. " connected to the server.")
+    end
+
+    for i = 1, #jeff.devs do
+        if(Player(data["userid"]):IsPlayer() && jeff.devs[i][1] == Player(data["userid"]):SteamID64()) then
+            RunConsoleCommand("say", "i fricking love ".. jeff.devs[i][2].. " so much!")
+            if(GetConVar("jeff_eventlog"):GetInt() == 1) then
+                jeff.addEventlistMessage(jeff.devs[i][2].. " is a cute developer and he joined your game.")
+            end
+        end
+    end
+
+    for k, v in pairs(player.GetAll()) do
+        v.espAlpha = 0
+    end
+end)
+
+jeff.addHook("player_disconnect", function(data)
+    if(GetConVar("jeff_eventlog"):GetInt() == 1) then
+        jeff.addEventlistMessage(data[""].. " disconnected from the server. (".. data["reason"]..")")
+    end
+end)
+
+jeff.addHook("player_changename", function(data)
+    if(GetConVar("jeff_eventlog"):GetInt() == 1) then
+        jeff.addEventlistMessage("[".. data["userid"].. "] ".. data["oldname"].. " has changed his/her name to ".. data["newname"].. ".")
+    end
+end)
+
+jeff.addHook("player_changename", function(data)
+    if(GetConVar("jeff_eventlog"):GetInt() == 1) then
+        jeff.addEventlistMessage("[".. data["userid"].. "] ".. data["oldname"].. " has changed his/her name to ".. data["newname"].. ".")
+    end
+end)
+
+jeff.addHook("server_cvar", function(data)
+    if(GetConVar("jeff_eventlog"):GetInt() == 1) then
+        jeff.addEventlistMessage(data["cvarname"].. " was changed to ".. data["cvarvalue"]..".")
+    end
+end)
+
+jeff.addHook("entity_killed", function(info)
+	Entity = Entity
+
+	jeff.inflictor = Entity(info.entindex_inflictor)
+	jeff.killer = Entity(info.entindex_attacker)
+	jeff.victim = Entity(info.entindex_killed)
+
+    if(GetConVar("jeff_eventlog"):GetInt() == 1) then
+        if(IsValid(jeff.killer) && IsValid(jeff.victim) && jeff.killer:IsPlayer() && jeff.victim:IsPlayer()) then
+            if(jeff.killer == jeff.victim && jeff.victim ~= jeff.ply) then
+                jeff.addEventlistMessage(jeff.victim:Nick().. " killed themself.")
+            elseif(jeff.killer == jeff.victim && jeff.victim == jeff.ply) then
+                jeff.addEventlistMessage("You killed yourself.")
+            elseif(jeff.killer == jeff.ply) then
+                jeff.addEventlistMessage("You killed ".. jeff.victim:Nick().. ".")
+            elseif(jeff.victim == jeff.ply) then
+                jeff.addEventlistMessage("You were killed by ".. jeff.killer:Nick().. ".")
+            else
+                jeff.addEventlistMessage(jeff.killer:Nick().. " killed ".. jeff.victim:Nick().. ".")
+            end
+        elseif(IsValid(jeff.victim) && !jeff.killer:IsPlayer() && jeff.victim:IsPlayer()) then
+            if(IsValid(jeff.inflictor) && jeff.inflictor:GetClass() == "prop_physics") then
+                if(jeff.victim == jeff.ply) then
+                    jeff.addEventlistMessage("You were killed by a prop.")
+                else
+                    jeff.addEventlistMessage(jeff.victim:Nick().. " was killed by a prop.")
+                end
+            elseif(jeff.victim == jeff.ply) then
+                jeff.addEventlistMessage("You were killed by the world.")
+            else
+                jeff.addEventlistMessage(jeff.victim:Nick().. " was killed by the world.")
+            end
+        end
+    end
+end)
+
+jeff.addHook("Think", function()
+    if(jeff.hostTimescale && GetConVar("jeff_fakelagtype"):GetInt() == 2 && GetConVar("host_timescale"):GetInt() != 1) then
+        RunConsoleCommand("host_timescale", "1")
+    elseif(!jeff.hostTimescale && GetConVar("jeff_fakelagtype"):GetInt() == 2 && GetConVar("jeff_fakelag"):GetInt() == 1) then
+        RunConsoleCommand("host_timescale", "0")
+    end
+
+    if(input.IsKeyDown(KEY_INSERT) && !jeff.menuDelay && file.Read("encore/loaded.txt", "DATA") == "true") then
+        if(!jeff.menuOpen) then
+            jeff.openMenu()
+        else
+            jeff.menuClosing = true
+        end
+        jeff.menuDelay = true
+        timer.Simple(0.5, function() jeff.menuDelay = false end)
+    end
+
+    -- if(GetConVar("jeff_menufade"):GetInt() == 1) then
+    --     if(jeff.Volume < 7) then jeff.Volume = jeff.Volume + 1 end
+    --     if(jeff.menuClosing && jeff.Volume > 0) then jeff.Volume = jeff.Volume - 1.3 end
+    --     if(jeff.Volume <= 0) then jeff.StopSong() end
+    --     if(jeff.menuClosing || jeff.menuOpen) then timer.Simple(0.2, function() jeff.volumeFix = true end) end
+    --     if(jeff.volumeFix && jeff.radioIsValid) then jeff.setVolume(jeff.Volume) end
+    -- else
+    --     if(jeff.Volume < 7) then jeff.Volume = 7 end
+    --     if(jeff.menuClosing && jeff.Volume > 0) then jeff.Volume = 0 end
+    --     if(jeff.Volume <= 0) then jeff.StopSong() end
+    --     if(jeff.menuOpen) then timer.Simple(0.2, function() jeff.volumeFix = true end) end
+    --     if(jeff.volumeFix && jeff.radioIsValid) then jeff.setVolume(jeff.Volume) end
+    -- end
+
+    if(jeff.menuOpen && jeff.currentTab == "ragebot") then
+        if(input.IsKeyDown(KEY_DOWN) && jeff.addPos != -150) then
+            jeff.addPos = jeff.addPos - 2
+        elseif(input.IsKeyDown(KEY_UP) && jeff.addPos > 0) then
+            jeff.addPos = jeff.addPos + 2
+        end
+    end
+
+    if(input.IsKeyDown(KEY_F6) && !jeff.Delay) then
+        if(GetConVar("jeff_watermark"):GetInt() == 1) then
+            GetConVar("jeff_watermark"):SetInt(0)
+        else
+            GetConVar("jeff_watermark"):SetInt(1)
+        end
+        jeff.Delay = true
+        timer.Simple(0.5, function() jeff.Delay = false end)
+    end
+
+    if(!system.HasFocus()) then
+        memesendpacket = true
+        jeff.hostTimescale = true
+    end
+
+    if(GetConVar("jeff_emotespammer"):GetInt() == 1) then
+        if(GetConVar("jeff_emote"):GetInt() == 1) then
+            RunConsoleCommand("act", "dance")
+        elseif(GetConVar("jeff_emote"):GetInt() == 2) then
+            RunConsoleCommand("act", "muscle")
+        elseif(GetConVar("jeff_emote"):GetInt() == 3) then
+            RunConsoleCommand("act", "wave")
+        elseif(GetConVar("jeff_emote"):GetInt() == 4) then
+            RunConsoleCommand("act", "robot")
+        elseif(GetConVar("jeff_emote"):GetInt() == 5) then
+            RunConsoleCommand("act", "bow")
+        end
+    end
+
+    if(GetConVar("jeff_dynamiclights"):GetInt() == 1) then
+        for k,v in pairs(player.GetAll()) do
+		    if(!jeff.em.IsValid(v) || jeff.em.Health(v) < 1 || v == jeff.ply || jeff.em.IsDormant(v)) then continue end
+            jeff.DynamicLights(v)
+        end
+    end
+end)
+
+jeff.addHook("Move", function()
+    if(!IsFirstTimePredicted()) then return end
+	jeff.servertime = CurTime()
+
+end)
+
+jeff.addHook("PreDrawEffects", function()
+    if(GetConVar("jeff_circlestrafe"):GetInt() == 1 && jeff.strafing) then
+        jeff.tracerX = util.QuickTrace(jeff.ply:GetPos() + Vector(5, 0, 0), Vector(400, 0, 0))
+        jeff.tracerY = util.QuickTrace(jeff.ply:GetPos() + Vector(0, 5, 0), Vector(0, 400, 0))
+        jeff.tracerX2 = util.QuickTrace(jeff.ply:GetPos() + Vector(-5, 0, 0), Vector(-400, 0, 0))
+        jeff.tracerY2 = util.QuickTrace(jeff.ply:GetPos() + Vector(0, -5, 0), Vector(0, -400, 0))
+
+        cam.Start3D()
+            // Tracer X
+            render.DrawLine(Vector(jeff.ply:GetPos()), jeff.tracerX.HitPos, jeff.Black) 
+            render.DrawWireframeBox(jeff.tracerX.HitPos, Angle(0, 0, 0), Vector(-2, -5, -2), Vector(10, 6, 10), jeff.Black)
+
+            // -
+            render.DrawLine(Vector(jeff.ply:GetPos()), jeff.tracerX2.HitPos, jeff.Black) 
+            render.DrawWireframeBox(jeff.tracerX2.HitPos, Angle(0, 0, 0), Vector(-2, -5, -2), Vector(10, 6, 10), jeff.Black)
+
+            // Tracer Y
+            render.DrawLine(Vector(jeff.ply:GetPos()), jeff.tracerY.HitPos, jeff.Black) 
+            render.DrawWireframeBox(jeff.tracerY.HitPos, Angle(0, 0, 0), Vector(-5, -2, -2), Vector(6, 10, 10), jeff.Black)
+
+            // -
+            render.DrawLine(Vector(jeff.ply:GetPos()), jeff.tracerY2.HitPos, jeff.Black) 
+            render.DrawWireframeBox(jeff.tracerY2.HitPos, Angle(0, 0, 0), Vector(-5, -2, -2), Vector(6, 10, 10), jeff.Black)
+        cam.End3D()
+
+        if(jeff.tracerX.HitPos.x > jeff.tracerX2.HitPos.x * 1.5 || jeff.tracerY.HitPos.y > jeff.tracerY2.HitPos.y * 1.5) then jeff.multiplied = 15 else jeff.multiplied = 40 end
+
+        jeff.cl_forwardspeed_value = jeff.tracerX.HitPos.x * jeff.multiplied
+        jeff.cl_sidespeed_value = jeff.tracerY.HitPos.x * jeff.multiplied
+    end
+end)
+
+jeff.addHook("PostDrawOpaqueRenderables", function()
+    if(engine.ActiveGamemode() == "terrortown" && GAMEMODE.round_state == ROUND_ACTIVE) then
+        for _,v in pairs(ents.GetAll()) do
+            if(v && IsValid(v) && table.HasValue(jeff.tWeapons, v:GetClass())) then
+                if(v.Owner && IsValid(v.Owner) && v.Owner:IsTerror() && !v.Owner.IsTerrorist) then
+                    if(!v.Owner:IsDetective()) then
+                        if(GetConVar("jeff_traitorfinder"):GetInt() == 1) then
+                            if(v.Owner == jeff.ply) then return end
+                            v.Owner.IsTerrorist = true
+                            jeff.printChat(v.Owner:Nick().. " is probably a traitor with the weapon ".. v:GetClass().. "!", jeff.White)
+                            if(GetConVar("jeff_eventlog"):GetInt() == 1) then
+                                jeff.addEventlistMessage(v.Owner:Nick().. " is probably a traitor with the weapon ".. v:GetClass().. "!")
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+if(file.Read("encore/loaded.txt", "DATA") == "false") then
+    jeff.openInfoMenu()
+end
+jeff.eventListOpen()
